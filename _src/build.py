@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Builds the Latine Mayfair static site into ../docs (served by GitHub Pages)
+"""Builds the Latine Mayfair static site into the repo root (served by GitHub Pages)
    python3 build.py           -> images load from latinemayfair.com (current)
    python3 build.py --local   -> images load from /images (after running fetch_images.sh)
 """
 import os, sys, re, html, shutil
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, '..', 'docs')
+OUT = os.path.normpath(os.path.join(HERE, '..'))  # repo root = GitHub Pages root
 LOCAL = '--local' in sys.argv
 REMOTE = 'https://latinemayfair.com/wp-content/uploads/'
 BOOK = 'https://www.opentable.co.uk/r/latine-mayfair-reservations-london?restref=474459&lang=en-GB&ot_source=Restaurant%20website'
@@ -643,7 +643,14 @@ def notfound(P):
 
 # ---------------------------------------------------------------- BUILD
 if __name__ == '__main__':
-    if os.path.exists(OUT): shutil.rmtree(OUT)
+    # clean only what this script generates (OUT is the repo root)
+    GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images',
+           'the-restaurant', 'our-menu', 'private-dining-room', 'christmas', 'portfolio-gallery', 'about-us', 'careers',
+           'press', 'lacav', 'lucky-7', 'reservation-policy', 'legal', 'journal', 'team', 'main-home', '404tmp']
+    for g in GEN:
+        t = os.path.join(OUT, g)
+        if os.path.isdir(t): shutil.rmtree(t)
+        elif os.path.exists(t): os.remove(t)
     os.makedirs(os.path.join(OUT, 'css')); os.makedirs(os.path.join(OUT, 'js'))
     open(os.path.join(OUT, 'css/site.css'), 'w').write(open(os.path.join(HERE, 'base.css')).read() + open(os.path.join(HERE, 'pages.css')).read())
     shutil.copy(os.path.join(HERE, 'site.js'), os.path.join(OUT, 'js/site.js'))
