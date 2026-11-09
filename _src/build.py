@@ -20,7 +20,7 @@ PHOTOS = {
  'Restaurant-1-scaled.jpg': 'dining-room-render.jpg', 'Restaurant-8-scaled.jpg': 'dining-room-render.jpg', 'LATINE-restautant-1024x684.png': 'dining-room-render.jpg',
  'Restaurant-6-1300x650.jpg': 'dining-room-render.jpg', 'Restaurant-10-1300x650.jpg': 'dining-room-render.jpg',
  'Restaurant-3-scaled.jpg': 'crudo-bar.jpg', 'House-Story-e1779786021844-1024x684.png': 'crudo-bar.jpg',
- 'CANDELA_LATINE-e1779785134779.jpg': 'la-candela.jpg', 'bar-candela-latine.jpg': 'la-candela.jpg',
+ 'CANDELA_LATINE-e1779785134779.jpg': 'la-candela.jpg', 'bar-candela-latine.jpg': 'cocktail.jpg',
  'latine-linee.jpg': 'la-candela-stripes.jpg', 'PHOTO-2026-02-25-09-15-34.jpg': 'la-candela-stripes.jpg',
  'PDR1-scaled.jpg': 'el-cielo-table.jpg', 'PDR4-scaled.jpg': 'el-cielo-table.jpg', 'PDR5-scaled.jpg': 'el-cielo-table.jpg',
  'PDR2-scaled.jpg': 'el-cielo-chandelier.jpg', 'PDR6-scaled.jpg': 'el-cielo-chandelier.jpg',
@@ -28,12 +28,14 @@ PHOTOS = {
  'ChatGPT-Image-Apr-15-2026-10_36_38-PM.png': 'prawns.jpg', 'ChatGPT-Image-Apr-15-2026-10_41_32-PM.png': 'oysters.jpg',
  'ChatGPT-Image-Apr-16-2026-09_33_05-AM.png': 'squid-ink.jpg', 'ChatGPT-Image-Apr-16-2026-09_35_51-AM.png': 'beef.jpg',
  'ChatGPT-Image-Apr-16-2026-09_44_31-AM.png': 'signature-main.jpg',
- 'DSC_6256-copy-2-scaled.jpg': 'la-candela-stripes.jpg',  # no dessert shot yet
+ 'DSC_6256-copy-2-scaled.jpg': 'dessert-tatin.jpg',
 }
 
 def IMG(p, P=''):
     USED.add(p)
     b = os.path.basename(p)
+    if p.startswith('photos/'):          # direct reference to a photo in _src/photos
+        return P + 'images/' + b
     if LOCAL:
         return P + 'images/' + PHOTOS.get(b, b)
     return REMOTE + p
@@ -360,8 +362,8 @@ def restaurant(P):
 MENUS = [
  ('À la carte', 'Lunch &amp; dinner', 'Refined French technique and the vibrant flavours of Latin America. Seasonal ingredients, fresh seafood and carefully prepared dishes, designed to be enjoyed from lunch through to dinner.', '2026/09/Menu-Summer-Latine-Aug-2.pdf', '2026/04/ChatGPT-Image-Apr-16-2026-09_44_31-AM.png'),
  ('Set lunch', 'Two or three courses', 'A lighter, quicker option, perfect for a midday break in Mayfair. Choose two or three courses from a selection of seasonal dishes.', '2026/09/Lunch-Menu_LATINE09.pdf', '2026/04/ChatGPT-Image-Apr-15-2026-10_36_38-PM.png'),
- ('Desserts', 'French pastry, Latin accent', 'Refined sweet creations bringing together French pastry technique with subtle Latin American influences: elegant, balanced and indulgent.', '2026/09/Dessert-menu-Final-16-06-26-1.pdf-4.pdf', '2026/09/DSC_6256-copy-2-scaled.jpg'),
- ('Wine', 'The list', 'A carefully curated selection from renowned vineyards and emerging producers around the world, balancing classic regions with distinctive discoveries.', '2026/06/Wine-List.pdf', '2026/09/Restaurant-8-scaled.jpg'),
+ ('Desserts', 'French pastry, Latin accent', 'Refined sweet creations bringing together French pastry technique with subtle Latin American influences: elegant, balanced and indulgent.', '2026/09/Dessert-menu-Final-16-06-26-1.pdf-4.pdf', 'photos/dessert-caramel.jpg'),
+ ('Wine', 'The list', 'A carefully curated selection from renowned vineyards and emerging producers around the world, balancing classic regions with distinctive discoveries.', '2026/06/Wine-List.pdf', 'photos/wine.jpg'),
 ]
 def menus(P):
     cards = ''.join(f'''<article class="mcard rv{' d1' if i % 2 else ''}">
@@ -376,7 +378,7 @@ def menus(P):
       <div class="ph"><img src="{IMG('2026/09/PDR5-scaled.jpg', P)}" alt="El Cielo" loading="lazy"></div>
       <div class="tx"><p class="eyebrow">El Cielo &amp; events</p><h3>Private dining</h3><p>Private dining menus can be tailored to your group and occasion, from seated dinners to canapé receptions.</p><a class="link" href="{P}private-dining-room/#enquire">Enquire</a></div>
     </article>'''
-    return phero(P, '2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png', 'Menus', 'Precision,<br>with <em>passion</em>',
+    return phero(P, 'photos/beef-wide.jpg', 'Menus', 'Precision,<br>with <em>passion</em>',
         'Rooted in French technique, inspired by Latin America. Seasonal produce, fresh seafood and dishes that move easily from lunch to dinner.', btn_book()) + f'''
 <section class="sec tint">
   <div class="menu-list">{cards}</div>
@@ -388,7 +390,7 @@ def menus(P):
     <div><img src="{IMG('2026/04/ChatGPT-Image-Apr-15-2026-10_41_32-PM.png', P)}" alt="Oysters" loading="lazy"></div>
     <div><img src="{IMG('2026/04/ChatGPT-Image-Apr-16-2026-09_33_05-AM.png', P)}" alt="Squid ink dish" loading="lazy"></div>
     <div><img src="{IMG('2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png', P)}" alt="Beef with jus" loading="lazy"></div>
-    <div><img src="{IMG('2026/04/ChatGPT-Image-Apr-15-2026-10_36_38-PM.png', P)}" alt="Seafood pasta" loading="lazy"></div>
+    <div><img src="{IMG('2026/09/DSC_6256-copy-2-scaled.jpg', P)}" alt="Tarte tatin on a Latine plate" loading="lazy"></div>
   </div>
   <div style="text-align:center;margin-top:60px" class="rv">{btn_book()}</div>
 </section>
@@ -490,6 +492,10 @@ GALLERY = [
  ('2026/04/ChatGPT-Image-Apr-16-2026-09_33_05-AM.png','food','Squid, squid ink'),
  ('2026/04/latine-linee.jpg','candela','The striped room'),
  ('2026/04/ChatGPT-Image-Apr-16-2026-09_44_31-AM.png','food','Signature main'),
+ ('2026/09/DSC_6256-copy-2-scaled.jpg','food','Tarte tatin'),
+ ('2026/04/bar-candela-latine.jpg','candela','A cocktail at La Candela'),
+ ('photos/dessert-caramel.jpg','food','Dessert'),
+ ('photos/wine.jpg','candela','Wine'),
 ]
 def gallery(P):
     items = ''.join(f'<a href="{IMG(p, P)}" data-c="{c}"><img src="{IMG(p, P)}" alt="{a}" loading="lazy"></a>' for p, c, a in GALLERY)
