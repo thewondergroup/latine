@@ -13,9 +13,30 @@ BOOK = 'https://www.opentable.co.uk/r/latine-mayfair-reservations-london?restref
 SITE = 'https://latinemayfair.com/'
 USED = set()
 
+# Real photography (in _src/photos) mapped onto each image slot. Slots not listed keep their placeholder.
+PHOTOS = {
+ 'LATINE_RESTAURANT1.jpg': 'dining-room.jpg', 'Restaurant-2-scaled.jpg': 'dining-room.jpg', 'LATINE-sala-1024x684.png': 'dining-room.jpg',
+ 'LATINE-carr-1024x684.png': 'dining-room.jpg', 'Restaurant-5-1300x650.jpg': 'dining-room.jpg',
+ 'Restaurant-1-scaled.jpg': 'dining-room-render.jpg', 'Restaurant-8-scaled.jpg': 'dining-room-render.jpg', 'LATINE-restautant-1024x684.png': 'dining-room-render.jpg',
+ 'Restaurant-6-1300x650.jpg': 'dining-room-render.jpg', 'Restaurant-10-1300x650.jpg': 'dining-room-render.jpg',
+ 'Restaurant-3-scaled.jpg': 'crudo-bar.jpg', 'House-Story-e1779786021844-1024x684.png': 'crudo-bar.jpg',
+ 'CANDELA_LATINE-e1779785134779.jpg': 'la-candela.jpg', 'bar-candela-latine.jpg': 'la-candela.jpg',
+ 'latine-linee.jpg': 'la-candela-stripes.jpg', 'PHOTO-2026-02-25-09-15-34.jpg': 'la-candela-stripes.jpg',
+ 'PDR1-scaled.jpg': 'el-cielo-table.jpg', 'PDR4-scaled.jpg': 'el-cielo-table.jpg', 'PDR5-scaled.jpg': 'el-cielo-table.jpg',
+ 'PDR2-scaled.jpg': 'el-cielo-chandelier.jpg', 'PDR6-scaled.jpg': 'el-cielo-chandelier.jpg',
+ 'Terrace-scaled.jpg': 'terrace.jpg', 'Terrace-2-scaled.jpg': 'terrace.jpg', 'Terrace3-1300x650.jpg': 'terrace.jpg', 'stairs-latine.jpg': 'crudo-bar.jpg',
+ 'ChatGPT-Image-Apr-15-2026-10_36_38-PM.png': 'prawns.jpg', 'ChatGPT-Image-Apr-15-2026-10_41_32-PM.png': 'oysters.jpg',
+ 'ChatGPT-Image-Apr-16-2026-09_33_05-AM.png': 'squid-ink.jpg', 'ChatGPT-Image-Apr-16-2026-09_35_51-AM.png': 'beef.jpg',
+ 'ChatGPT-Image-Apr-16-2026-09_44_31-AM.png': 'signature-main.jpg',
+ 'DSC_6256-copy-2-scaled.jpg': 'la-candela-stripes.jpg',  # no dessert shot yet
+}
+
 def IMG(p, P=''):
     USED.add(p)
-    return (P + 'images/' + os.path.basename(p)) if LOCAL else REMOTE + p
+    b = os.path.basename(p)
+    if LOCAL:
+        return P + 'images/' + PHOTOS.get(b, b)
+    return REMOTE + p
 
 # ---------------------------------------------------------------- chrome
 NAV_L = [('the-restaurant', 'The Restaurant'), ('our-menu', 'Menus'), ('private-dining-room', 'Private Dining'), ('christmas', 'Christmas')]
@@ -388,8 +409,8 @@ def private(P):
   <div class="sec-head"><p class="eyebrow rv">Occasions</p><h2 class="rv d1">Made for <em>every kind</em> of gathering</h2><p class="rv d2">Private dining menus can be tailored to suit individual requirements, with the full Latine kitchen, cellar and cocktail bar at your disposal.</p></div>
   <div class="acts-grid">
     <article class="act rv"><div class="ph"><img src="{IMG('2026/09/PDR1-scaled.jpg', P)}" alt="" loading="lazy"></div><div class="meta eyebrow"><span>Celebrations</span><span>Up to 20</span></div><h3>Birthdays &amp; milestones</h3><p>Engagements, anniversaries, rehearsal dinners and the birthdays that deserve a long table and a proper toast.</p></article>
-    <article class="act rv d1"><div class="ph"><img src="{IMG('2026/09/PDR4-scaled.jpg', P)}" alt="" loading="lazy"></div><div class="meta eyebrow"><span>Business</span><span>Lunch or dinner</span></div><h3>Client &amp; team dinners</h3><p>A discreet room minutes from Bond Street and Hanover Square for client lunches, board dinners and team celebrations.</p></article>
-    <article class="act rv d2"><div class="ph"><img src="{IMG('2026/09/PDR2-scaled.jpg', P)}" alt="" loading="lazy"></div><div class="meta eyebrow"><span>Receptions</span><span>40+ standing</span></div><h3>Parties &amp; launches</h3><p>Standing receptions with Champagne and cocktails, from product launches to Christmas parties, with La Candela downstairs for later.</p></article>
+    <article class="act rv d1"><div class="ph"><img src="{IMG('2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png', P)}" alt="" loading="lazy"></div><div class="meta eyebrow"><span>Business</span><span>Lunch or dinner</span></div><h3>Client &amp; team dinners</h3><p>A discreet room minutes from Bond Street and Hanover Square for client lunches, board dinners and team celebrations.</p></article>
+    <article class="act rv d2"><div class="ph"><img src="{IMG('2026/03/CANDELA_LATINE-e1779785134779.jpg', P)}" alt="" loading="lazy"></div><div class="meta eyebrow"><span>Receptions</span><span>40+ standing</span></div><h3>Parties &amp; launches</h3><p>Standing receptions with Champagne and cocktails, from product launches to Christmas parties, with La Candela downstairs for later.</p></article>
   </div>
 </section>
 <section class="sec dark">
@@ -456,20 +477,19 @@ def christmas(P):
 
 # ---------------------------------------------------------------- GALLERY
 GALLERY = [
- ('2026/03/LATINE_RESTAURANT1.jpg','restaurant','The dining room'),('2026/09/Restaurant-3-scaled.jpg','restaurant','The crudo bar'),
- ('2026/04/ChatGPT-Image-Apr-15-2026-10_41_32-PM.png','food','Oysters'),('2026/09/PDR1-scaled.jpg','cielo','El Cielo by candlelight'),
- ('2026/09/Terrace-scaled.jpg','terrace','The terrace'),('2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png','food','Beef with jus'),
- ('2026/09/Restaurant-1-scaled.jpg','restaurant','Evening in the dining room'),('2026/03/CANDELA_LATINE-e1779785134779.jpg','candela','La Candela'),
- ('2026/09/PDR6-scaled.jpg','cielo','The painted walls of El Cielo'),('2026/04/ChatGPT-Image-Apr-15-2026-10_36_38-PM.png','food','Seafood pasta'),
- ('2026/09/Restaurant-2-scaled.jpg','restaurant','The dining room'),('2026/09/Terrace-2-scaled.jpg','terrace','Lancashire Court'),
- ('2026/04/bar-candela-latine.jpg','candela','The bar'),('2026/09/DSC_6256-copy-2-scaled.jpg','food','Dessert'),
- ('2026/09/PDR2-scaled.jpg','cielo','Candelabra in El Cielo'),('2026/09/Restaurant-5-1300x650.jpg','restaurant','The dining room'),
- ('2026/04/ChatGPT-Image-Apr-16-2026-09_33_05-AM.png','food','Squid ink'),('2026/04/latine-linee.jpg','candela','Striped banquettes'),
- ('2026/09/Terrace3-1300x650.jpg','terrace','The terrace'),('2026/09/PDR4-scaled.jpg','cielo','El Cielo set for dinner'),
- ('2026/09/Restaurant-8-scaled.jpg','restaurant','Table detail'),('2026/04/ChatGPT-Image-Apr-16-2026-09_44_31-AM.png','food','Signature main'),
- ('2026/09/PDR5-scaled.jpg','cielo','El Cielo'),('2026/04/stairs-latine.jpg','restaurant','The staircase'),
- ('2026/09/Restaurant-6-1300x650.jpg','restaurant','The dining room'),('2026/05/LATINE-sala-1024x684.png','restaurant','Lunch at Latine'),
- ('2026/09/Restaurant-10-1300x650.jpg','restaurant','The room'),('2026/05/House-Story-e1779786021844-1024x684.png','food','The Latine plate'),
+ ('2026/03/LATINE_RESTAURANT1.jpg','restaurant','The dining room'),
+ ('2026/04/ChatGPT-Image-Apr-15-2026-10_41_32-PM.png','food','Oysters'),
+ ('2026/09/PDR1-scaled.jpg','cielo','El Cielo, set for dinner'),
+ ('2026/09/Terrace-scaled.jpg','terrace','The terrace in Lancashire Court'),
+ ('2026/04/ChatGPT-Image-Apr-15-2026-10_36_38-PM.png','food','Prawns, plantain'),
+ ('2026/09/Restaurant-3-scaled.jpg','restaurant','The crudo bar'),
+ ('2026/03/CANDELA_LATINE-e1779785134779.jpg','candela','La Candela'),
+ ('2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png','food','Beef, red wine jus'),
+ ('2026/09/PDR2-scaled.jpg','cielo','The chandelier in El Cielo'),
+ ('2026/09/Restaurant-1-scaled.jpg','restaurant','The dining room'),
+ ('2026/04/ChatGPT-Image-Apr-16-2026-09_33_05-AM.png','food','Squid, squid ink'),
+ ('2026/04/latine-linee.jpg','candela','The striped room'),
+ ('2026/04/ChatGPT-Image-Apr-16-2026-09_44_31-AM.png','food','Signature main'),
 ]
 def gallery(P):
     items = ''.join(f'<a href="{IMG(p, P)}" data-c="{c}"><img src="{IMG(p, P)}" alt="{a}" loading="lazy"></a>' for p, c, a in GALLERY)
@@ -656,7 +676,11 @@ if __name__ == '__main__':
     shutil.copy(os.path.join(HERE, 'site.js'), os.path.join(OUT, 'js/site.js'))
     if LOCAL:
         if not os.path.isdir(os.path.join(HERE, 'images')): sys.exit('Run ./fetch_images.sh first')
-        shutil.copytree(os.path.join(HERE, 'images'), os.path.join(OUT, 'images'))
+        os.makedirs(os.path.join(OUT, 'images'))
+        for f in os.listdir(os.path.join(HERE, 'images')):
+            if f not in PHOTOS: shutil.copy(os.path.join(HERE, 'images', f), os.path.join(OUT, 'images', f))
+        for f in os.listdir(os.path.join(HERE, 'photos')):
+            shutil.copy(os.path.join(HERE, 'photos', f), os.path.join(OUT, 'images', f))
 
     page('', 'Latine Mayfair | French–Latin Restaurant, Private Dining & Christmas in Mayfair',
          'Latine is a French–Latin American restaurant in the cobbled mews of Lancashire Court, Mayfair, moments from Bond Street. Lunch, dinner, La Candela lounge, El Cielo private dining and Christmas parties.', home, schema=True)
