@@ -10,7 +10,7 @@ Static site for GitHub Pages, served from the repo root on `main`.
     cd _src && python3 build.py --local
 
 ## Before go-live
-1. **Images:** the site currently uses on-brand placeholder images (`_src/images/`, made by `_src/tools/make_placeholders.py`). To swap in the real photos: `cd _src && ./fetch_images.sh` (downloads them from the old WordPress site, same filenames, and rebuilds). Or drop new photos into `_src/images/` with the same filenames and run `python3 build.py --local`.
+1. **Images:** real photography lives in `_src/photos/` and is mapped to each image slot in the `PHOTOS` table in `build.py`. To add or swap a photo, drop it in `_src/photos/`, update `PHOTOS`, and run `python3 build.py --local`. Still missing: a dessert shot and people/team shots (those slots reuse other photos for now).
 2. **Forms:** the events/Christmas enquiry form and newsletter forms are front-end only. Wire to Latine's events inbox + Google Sheet (search `TODO` in build.py / home_body.html).
 3. **Christmas:** add festive menus, prices and any Christmas Eve / NYE details once supplied (christmas() in build.py).
 4. **Tracking:** add GTM / Meta pixel to `head()` in build.py.
