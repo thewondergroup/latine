@@ -263,7 +263,7 @@ def press_marquee():
 # ---------------------------------------------------------------- HOME
 def home(P):
     b = open(os.path.join(HERE, 'home_body.html')).read()
-    b = re.sub(r'https://latinemayfair\.com/wp-content/uploads/([^"\)]+)', lambda m: IMG(m.group(1), P), b)
+    b = re.sub(r'https://latinemayfair\.com/wp-content/uploads/([^"\)]+\.(?:jpe?g|png|webp))', lambda m: IMG(m.group(1), P), b)
     b = b.replace('<section class="xmas on-dark" id="christmas">', '<section class="xmas on-dark sparkles" id="christmas">')
     b = b.replace('href="https://latinemayfair.com/lucky-7/"', f'href="{P}lucky-7/"')
     # link out to the new inner pages
