@@ -40,8 +40,15 @@
 
   // mobile menu
   var ov=$('#overlay');
-  if(ov){$('#burger').onclick=function(){ov.classList.add('open')};$('#close').onclick=function(){ov.classList.remove('open')};
-    $$('a',ov).forEach(function(a){a.addEventListener('click',function(){ov.classList.remove('open')})});}
+  if(ov){
+    var imgs=$$('.mo-media img',ov);
+    function openM(){imgs.forEach(function(i){i.loading='eager'});ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.documentElement.classList.add('small-open')}
+    function closeM(){ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.documentElement.classList.remove('small-open')}
+    $('#burger').onclick=openM;$('#close').onclick=closeM;
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeM()});
+    $$('a',ov).forEach(function(a){a.addEventListener('click',closeM)});
+    $$('.mo-links a',ov).forEach(function(a){a.addEventListener('mouseenter',function(){var i=a.getAttribute('data-i');imgs.forEach(function(im){im.classList.toggle('on',im.getAttribute('data-i')===i)})})});
+  }
 
   // occasion preselect (also from ?occasion= on page load)
   function setOcc(v){$$('#chips input').forEach(function(r){r.checked=(r.value===v)})}

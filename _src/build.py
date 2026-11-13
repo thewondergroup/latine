@@ -77,7 +77,10 @@ SCHEMA = '''<script type="application/ld+json">
 def nav(P, active):
     def li(items):
         return ''.join(f'<li><a href="{P}{s}/"{" class=\"active\"" if s == active else ""}>{t}</a></li>' for s, t in items)
-    over = ''.join(f'<a href="{P}{s}/">{t}</a>' for s, t in NAV_L + NAV_R)
+    MO = [('', 'Home', 'dining-room.jpg'), ('the-restaurant/', 'The Restaurant', 'dining-room-render.jpg'), ('our-menu/', 'Menus', 'signature-main.jpg'), ('private-dining-room/', 'Private Dining', 'el-cielo-table.jpg'), ('christmas/', 'Christmas', 'el-cielo-chandelier.jpg'), ('portfolio-gallery/', 'Gallery', 'terrace-guests.jpg'), ('about-us/', 'About', 'crudo-bar.jpg')]
+    cur_i = next((i for i, (u, _, _) in enumerate(MO) if u.strip('/') == active or (u == '' and active == 'home')), 0)
+    mo_imgs = ''.join(f'<img src="{P}images/{im}" alt="" data-i="{i}"{" class=\"on\"" if i == cur_i else ""} loading="lazy">' for i, (_, _, im) in enumerate(MO))
+    mo_links = ''.join(f'<a href="{(P + u) or './'}" data-i="{i}" style="--i:{i}"{" class=\"cur\"" if (u.strip("/") == active or (u == "" and active == "home")) else ""}><span class="mo-n">{["i","ii","iii","iv","v","vi","vii"][i]}.</span><span class="mo-t">{t}</span></a>' for i, (u, t, _) in enumerate(MO))
     return f'''<div class="festive-bar"><span class="star">✦</span>Christmas at Latine <span class="hide-s">· Festive dining &amp; private parties</span> now booking <a href="{P}christmas/">Discover</a></div>
 <nav class="nav" id="nav">
   <div class="left" style="display:flex;align-items:center">
@@ -90,10 +93,18 @@ def nav(P, active):
     <a class="btn" href="{BOOK}" target="_blank" rel="noopener">Book a table</a>
   </div>
 </nav>
-<div class="menu-overlay" id="overlay">
-  <button class="close" id="close" aria-label="Close menu">×</button>
-  <a href="{P or './'}">Home</a>{over}
-  <a class="btn btn-gold" href="{BOOK}" target="_blank" rel="noopener">Book a table</a>
+<div class="menu-overlay" id="overlay" aria-hidden="true">
+  <div class="mo-media" aria-hidden="true">{mo_imgs}</div>
+  <div class="mo-main">
+    <div class="mo-top"><span class="wordmark">Latine</span><button class="close" id="close" aria-label="Close menu"><span></span><span></span></button></div>
+    <nav class="mo-links">{mo_links}</nav>
+    <div class="mo-small"><a href="{P}press/">Press</a><a href="{P}careers/">Careers</a><a href="{P}lucky-7/">Lucky 7</a><a href="{P}lacav/">LACAV</a><a href="https://www.instagram.com/latinemayfair" target="_blank" rel="noopener">Instagram</a></div>
+    <div class="mo-foot">
+      <div><span class="eyebrow">Find us</span><p>10–11 Lancashire Court<br>Mayfair, London W1S 1EY</p></div>
+      <div><span class="eyebrow">Hours</span><p>Mon – Sat, 12pm – midnight<br><a href="tel:+442038873126">020 3887 3126</a></p></div>
+      <div class="mo-ctas"><a class="btn btn-gold" href="{BOOK}" target="_blank" rel="noopener">Book a table</a><a class="btn btn-line" href="{P}christmas/#enquire">Christmas enquiry</a></div>
+    </div>
+  </div>
 </div>
 '''
 
@@ -697,7 +708,7 @@ if __name__ == '__main__':
             shutil.copy(os.path.join(HERE, 'photos', f), os.path.join(OUT, 'images', f))
 
     page('', 'Latine Mayfair | French–Latin Restaurant, Private Dining & Christmas in Mayfair',
-         'Latine is a French–Latin American restaurant in the cobbled mews of Lancashire Court, Mayfair, moments from Bond Street. Lunch, dinner, La Candela lounge, El Cielo private dining and Christmas parties.', home, schema=True)
+         'Latine is a French–Latin American restaurant in the cobbled mews of Lancashire Court, Mayfair, moments from Bond Street. Lunch, dinner, La Candela lounge, El Cielo private dining and Christmas parties.', home, 'home', schema=True)
     page('the-restaurant/', 'The Restaurant | Latine Mayfair', 'Terrace, crudo bar, dining room and La Candela lounge: discover the spaces at Latine, a French–Latin restaurant in Lancashire Court, Mayfair.', restaurant, 'the-restaurant', og='2026/09/Restaurant-1-scaled.jpg')
     page('our-menu/', 'Menus | Latine Mayfair', 'À la carte, set lunch, desserts and wine at Latine Mayfair: French technique meets the flavours of Latin America.', menus, 'our-menu', og='2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png')
     page('private-dining-room/', 'Private Dining Room Mayfair | El Cielo at Latine', 'El Cielo, Latine\'s private dining room in Mayfair, seats up to 20 and holds 40+ for receptions. Tailored menus for celebrations, business dinners and Christmas parties.', private, 'private-dining-room', og='2026/09/PDR6-scaled.jpg')
