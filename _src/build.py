@@ -98,7 +98,7 @@ def nav(P, active):
   <div class="mo-main">
     <div class="mo-top"><span class="wordmark">Latine</span><button class="close" id="close" aria-label="Close menu"><span></span><span></span></button></div>
     <nav class="mo-links">{mo_links}</nav>
-    <div class="mo-small"><a href="{P}press/">Press</a><a href="{P}careers/">Careers</a><a href="{P}lucky-7/">Lucky 7</a><a href="{P}lacav/">LACAV</a><a href="https://www.instagram.com/latinemayfair" target="_blank" rel="noopener">Instagram</a></div>
+    <div class="mo-small"><a href="{P}press/">Press</a><a href="{P}careers/">Careers</a><a href="{P}lacav/">LACAV</a><a href="https://www.instagram.com/latinemayfair" target="_blank" rel="noopener">Instagram</a></div>
     <div class="mo-foot">
       <div><span class="eyebrow">Find us</span><p>10–11 Lancashire Court<br>Mayfair, London W1S 1EY</p></div>
       <div><span class="eyebrow">Hours</span><p>Mon – Sat, 12pm – midnight<br><a href="tel:+442038873126">020 3887 3126</a></p></div>
@@ -133,7 +133,7 @@ def footer(P):
         <li><a href="{P}about-us/">About us</a></li>
         <li><a href="{P}press/">Press</a></li>
         <li><a href="{P}careers/">Careers</a></li>
-        <li><a href="{P}lucky-7/">Lucky 7</a></li>
+        <li></li>
         <li><a href="{P}lacav/">LACAV</a></li>
         <li><a href="https://www.instagram.com/latinemayfair" target="_blank" rel="noopener">Instagram</a></li>
       </ul>
@@ -323,7 +323,6 @@ def home(P):
     b = b.replace('{{OFFER}}', offer(P))
     b = re.sub(r'\{\{VID:([a-z-]+)(:eager)?\}\}', lambda m: VID(m.group(1), P, bool(m.group(2))), b)
     b = b.replace('<section class="xmas on-dark" id="christmas">', '<section class="xmas on-dark sparkles" id="christmas">')
-    b = b.replace('href="https://latinemayfair.com/lucky-7/"', f'href="{P}lucky-7/"')
     # link out to the new inner pages
     b = b.replace('<h3>Afternoon in the mews</h3>', f'<h3><a href="{P}the-restaurant/#terrace">Afternoon in the mews</a></h3>')
     b = b.replace('<h3>Dinner, by candlelight</h3>', f'<h3><a href="{P}the-restaurant/">Dinner, by candlelight</a></h3>')
@@ -720,49 +719,6 @@ def lacav(P):
 </section>
 '''
 
-# ---------------------------------------------------------------- LUCKY 7
-def lucky(P):
-    terms = [
-     ('Eligibility', 'Lucky 7 is available to guests who make an eligible dining reservation directly through the official Latine Mayfair website.'),
-     ('Selection', 'Every 7th eligible online booking is selected for the Lucky 7 complimentary dining experience, based on the chronological order in which qualifying reservations are received.'),
-     ('Availability', 'Lucky 7 applies to eligible lunch and dinner reservations throughout the restaurant\'s published opening hours.'),
-     ('Maximum complimentary value', 'The maximum complimentary amount is £1,000 per winning reservation and table, not per person. Any amount exceeding £1,000 must be paid by the guest.'),
-     ('One winning reservation', 'Each winning reservation qualifies for one complimentary dining bill only, regardless of the number of guests at the table.'),
-     ('Valid reservations', 'The winning reservation must be honoured and the guests must dine at Latine Mayfair to receive the benefit. Cancelled bookings and no-shows are not eligible for complimentary dining.'),
-     ('Reveal', 'Winning guests will be informed at the end of their dining experience, when requesting their bill, and presented with the Lucky 7 Golden Card.'),
-     ('No cash alternative', 'The complimentary dining benefit cannot be exchanged for cash, credit or a future reservation. Any unused portion of the £1,000 maximum cannot be refunded or carried forward.'),
-     ('Non-transferable', 'The benefit applies exclusively to the selected reservation and cannot be transferred to another table or booking.'),
-     ('Promotion management', 'Latine Mayfair reserves the right to amend, suspend or withdraw the experience where reasonably necessary, subject to applicable law and without unfairly affecting benefits already earned.'),
-     ('Applicable law', 'These terms are governed by the laws of England and Wales and applicable UK consumer protection legislation.')]
-    t = ''.join(f'<p><b>{a}.</b> {b}</p>' for a, b in terms)
-    return f'''<section class="sec dark sparkles" style="padding-top:calc(38px + 160px);position:relative;overflow:hidden">
-  <div class="split">
-    <div class="rv"><div class="golden"><div class="t"><span>Latine Mayfair</span><span>Lucky 7</span></div><div class="n">7</div><div class="b">Your dining experience is on us</div></div></div>
-    <div class="copy">
-      <p class="eyebrow rv">Book direct · Lucky 7</p>
-      <h1 class="rv d1" style="font-size:clamp(46px,6vw,92px)">Your next dinner<br>could be <em style="color:var(--gold-l)">on us</em></h1>
-      <p class="rv d2">Every 7th online booking made through our website receives their entire bill complimentary. No competitions, no entries. Simply reserve online, enjoy the very best of Latine and leave the rest to luck.</p>
-      <p class="rv d2">You won't know until the very end: instead of the bill, you'll be presented with the Lucky 7 Golden Card.</p>
-      <div class="rv d3" style="margin-top:34px">{btn_book('btn-gold', 'Reserve your table')}</div>
-    </div>
-  </div>
-</section>
-<section class="sec">
-  <div class="sec-head"><p class="eyebrow rv">How it works</p><h2 class="rv d1">Five simple <em>steps</em></h2></div>
-  <div class="steps five">
-    <div class="step rv"><h3>Reserve</h3><p>Book lunch or dinner directly through the official Latine website.</p></div>
-    <div class="step rv d1"><h3>Enjoy</h3><p>French elegance meets the vibrant soul of Latin America.</p></div>
-    <div class="step rv d2"><h3>Every 7th wins</h3><p>Every 7th eligible online reservation is selected. No need to enter.</p></div>
-    <div class="step rv d3"><h3>The reveal</h3><p>When you ask for the bill, our team reveals whether you've been selected.</p></div>
-    <div class="step rv d3"><h3>On us</h3><p>Your dining bill is complimentary, subject to the terms below.</p></div>
-  </div>
-</section>
-<section class="sec dark">
-  <div class="sec-head"><p class="eyebrow rv">Terms &amp; conditions</p><h2 class="rv d1" style="font-size:clamp(34px,3.6vw,52px)">The <em>small print</em></h2></div>
-  <div class="terms rv">{t}</div>
-</section>
-'''
-
 # ---------------------------------------------------------------- POLICIES
 def policy(P):
     return f'''<header class="plain-head">
@@ -831,7 +787,6 @@ if __name__ == '__main__':
     page('careers/', 'Careers | Latine Mayfair', 'Join the kitchen, bar or front of house team at Latine, a French–Latin restaurant in Mayfair.', careers, og='2026/05/LATINE-carr-1024x684.png')
     page('press/', 'Press | Latine Mayfair', 'Latine Mayfair in the press: Wallpaper*, Forbes, The London Standard, SheerLuxe, Quintessentially and more.', press, plain=True)
     page('lacav/', 'LACAV | Coming Soon to Latine Mayfair', 'LACAV is coming soon to Latine Mayfair. Join the list to hear first.', lacav)
-    page('lucky-7/', 'Lucky 7 | Book Direct at Latine Mayfair', 'Every 7th online booking at Latine Mayfair, the bill is on us. How Lucky 7 works and terms and conditions.', lucky)
     page('reservation-policy/', 'Reservation Policy | Latine Mayfair', 'Reservation, cancellation and dress code policy at Latine Mayfair.', policy, plain=True)
     page('legal/', 'Privacy Policy | Latine Mayfair', 'Privacy policy for Latine Mayfair Limited.', legal, plain=True)
     # 404 (absolute paths, GitHub Pages serves it from any depth)
@@ -839,10 +794,10 @@ if __name__ == '__main__':
     t = open(os.path.join(OUT, '404tmp/index.html')).read().replace('href="../', 'href="/').replace('src="../', 'src="/')
     open(os.path.join(OUT, '404.html'), 'w').write(t); shutil.rmtree(os.path.join(OUT, '404tmp'))
     # old URLs
-    redirect('journal/', 'press/'); redirect('team/', 'about-us/'); redirect('main-home/', '')
+    redirect('journal/', 'press/'); redirect('lucky-7/', ''); redirect('team/', 'about-us/'); redirect('main-home/', '')
     # At go-live: run with --domain to add the CNAME, then point latinemayfair.com DNS at GitHub Pages
     if '--domain' in sys.argv: open(os.path.join(OUT, 'CNAME'), 'w').write('latinemayfair.com\n')
-    urls = ['', 'the-restaurant/', 'our-menu/', 'private-dining-room/', 'christmas/', 'portfolio-gallery/', 'about-us/', 'careers/', 'press/', 'lacav/', 'lucky-7/', 'reservation-policy/', 'legal/']
+    urls = ['', 'the-restaurant/', 'our-menu/', 'private-dining-room/', 'christmas/', 'portfolio-gallery/', 'about-us/', 'careers/', 'press/', 'lacav/', 'reservation-policy/', 'legal/']
     open(os.path.join(OUT, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}{u}</loc></url>\n' for u in urls) + '</urlset>\n')
     open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n')
     # image list for fetch_images.sh
