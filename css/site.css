@@ -473,7 +473,7 @@ video.vid{display:block;width:100%;height:100%;object-fit:cover;background:#1a15
 .trip .t1{animation-delay:.1s}.trip .t2{animation-delay:.35s}.trip .t3{animation-delay:.6s}
 @keyframes tripIn{to{opacity:1;transform:none}}
 .hero{background:#120e0b}
-.hero::after{background:linear-gradient(180deg,rgba(18,14,11,.55) 0%,rgba(18,14,11,.05) 30%,rgba(18,14,11,.2) 55%,rgba(18,14,11,.88) 100%)!important}
+.hero::after{background:linear-gradient(180deg,rgba(18,14,11,.7) 0%,rgba(18,14,11,.1) 32%,rgba(18,14,11,.2) 55%,rgba(18,14,11,.88) 100%)!important}
 @media (max-width:760px){.trip{grid-template-columns:1fr}.trip .t1,.trip .t3{display:none}}
 
 /* bar section */
@@ -496,3 +496,10 @@ video.vid{display:block;width:100%;height:100%;object-fit:cover;background:#1a15
 .mosaic .m6{grid-column:6/7;grid-row:5/7}
 
 @media (max-width:1020px){.bar-grid{grid-template-columns:1fr}.bar-vids .bv2{margin-top:60px}}
+
+/* nav collapses to the burger before the links get cramped */
+@media (max-width:1380px){
+  .nav ul{display:none}
+  .nav{grid-template-columns:1fr auto 1fr}
+  .burger{display:block}
+}
