@@ -16,7 +16,7 @@ USED = set()
 # Real photography (in _src/photos) mapped onto each image slot. Slots not listed keep their placeholder.
 PHOTOS = {
  'LATINE_RESTAURANT1.jpg': 'dining-room.jpg', 'Restaurant-2-scaled.jpg': 'dining-room.jpg', 'LATINE-sala-1024x684.png': 'dining-room.jpg',
- 'LATINE-carr-1024x684.png': 'dining-room.jpg', 'Restaurant-5-1300x650.jpg': 'dining-room.jpg',
+ 'LATINE-carr-1024x684.png': 'terrace-guests.jpg', 'Restaurant-5-1300x650.jpg': 'dining-room.jpg',
  'Restaurant-1-scaled.jpg': 'dining-room-render.jpg', 'Restaurant-8-scaled.jpg': 'dining-room-render.jpg', 'LATINE-restautant-1024x684.png': 'dining-room-render.jpg',
  'Restaurant-6-1300x650.jpg': 'dining-room-render.jpg', 'Restaurant-10-1300x650.jpg': 'dining-room-render.jpg',
  'Restaurant-3-scaled.jpg': 'crudo-bar.jpg', 'House-Story-e1779786021844-1024x684.png': 'crudo-bar.jpg',
@@ -24,7 +24,7 @@ PHOTOS = {
  'latine-linee.jpg': 'la-candela-stripes.jpg', 'PHOTO-2026-02-25-09-15-34.jpg': 'la-candela-stripes.jpg',
  'PDR1-scaled.jpg': 'el-cielo-table.jpg', 'PDR4-scaled.jpg': 'el-cielo-table.jpg', 'PDR5-scaled.jpg': 'el-cielo-table.jpg',
  'PDR2-scaled.jpg': 'el-cielo-chandelier.jpg', 'PDR6-scaled.jpg': 'el-cielo-chandelier.jpg',
- 'Terrace-scaled.jpg': 'terrace.jpg', 'Terrace-2-scaled.jpg': 'terrace.jpg', 'Terrace3-1300x650.jpg': 'terrace.jpg', 'stairs-latine.jpg': 'crudo-bar.jpg',
+ 'Terrace-scaled.jpg': 'terrace-guests.jpg', 'Terrace-2-scaled.jpg': 'terrace-guests.jpg', 'Terrace3-1300x650.jpg': 'terrace.jpg', 'stairs-latine.jpg': 'crudo-bar.jpg',
  'ChatGPT-Image-Apr-15-2026-10_36_38-PM.png': 'prawns.jpg', 'ChatGPT-Image-Apr-15-2026-10_41_32-PM.png': 'oysters.jpg',
  'ChatGPT-Image-Apr-16-2026-09_33_05-AM.png': 'squid-ink.jpg', 'ChatGPT-Image-Apr-16-2026-09_35_51-AM.png': 'beef.jpg',
  'ChatGPT-Image-Apr-16-2026-09_44_31-AM.png': 'signature-main.jpg',
@@ -39,6 +39,11 @@ def IMG(p, P=''):
     if LOCAL:
         return P + 'images/' + PHOTOS.get(b, b)
     return REMOTE + p
+
+def VID(name, P='', eager=False, cls=''):
+    # lazy, muted, looping, inline; site.js loads + plays when on screen, pauses when off
+    return (f'<video class="vid {cls}" muted loop playsinline preload="none"{" data-eager" if eager else ""} '
+            f'poster="{P}video/{name}.jpg" data-src="{P}video/{name}.mp4" aria-hidden="true"></video>')
 
 # ---------------------------------------------------------------- chrome
 NAV_L = [('the-restaurant', 'The Restaurant'), ('our-menu', 'Menus'), ('private-dining-room', 'Private Dining'), ('christmas', 'Christmas')]
@@ -178,7 +183,7 @@ def btn_book(cls='btn-solid', label='Book a table'):
 def split(P, img, eyebrow, h2, paras, extra='', rev=False, wide=False, sid='', floor=''):
     ps = ''.join(f'<p class="rv d2">{p}</p>' for p in paras)
     return f'''<div class="split{' rev' if rev else ''}"{f' id="{sid}"' if sid else ''}>
-  <div class="split-ph{' wide' if wide else ''} rv"><img src="{IMG(img, P)}" alt="" loading="lazy"></div>
+  <div class="split-ph{' wide' if wide else ''} rv">{VID(img[6:], P) if img.startswith('video:') else f'<img src="{IMG(img, P)}" alt="" loading="lazy">'}</div>
   <div class="copy">
     <p class="eyebrow rv">{eyebrow}</p>
     <h2 class="rv d1">{h2}</h2>
@@ -287,6 +292,7 @@ def press_marquee():
 def home(P):
     b = open(os.path.join(HERE, 'home_body.html')).read()
     b = re.sub(r'https://latinemayfair\.com/wp-content/uploads/([^"\)]+\.(?:jpe?g|png|webp))', lambda m: IMG(m.group(1), P), b)
+    b = re.sub(r'\{\{VID:([a-z-]+)(:eager)?\}\}', lambda m: VID(m.group(1), P, bool(m.group(2))), b)
     b = b.replace('<section class="xmas on-dark" id="christmas">', '<section class="xmas on-dark sparkles" id="christmas">')
     b = b.replace('href="https://latinemayfair.com/lucky-7/"', f'href="{P}lucky-7/"')
     # link out to the new inner pages
@@ -335,7 +341,7 @@ def restaurant(P):
         btn_book('btn-line', 'Reserve'), floor='Lancashire Court') + f'''
 </section>
 <section class="sec dark sparkles" id="la-candela" style="position:relative;overflow:hidden">
-''' + split(P, '2026/03/CANDELA_LATINE-e1779785134779.jpg', 'La Candela', 'As the night<br><em>turns</em>', [
+''' + split(P, 'video:negroni', 'La Candela', 'As the night<br><em>turns</em>', [
         'On the first floor, La Candela brings a different rhythm to the evening. As the night progresses, the space becomes a vibrant lounge where DJs play, bringing energy without losing the restaurant\'s sense of refinement.',
         'With music, cocktails and Champagne flowing, the atmosphere grows livelier, and a carefully curated cocktail programme lets the night carry on well beyond the table.'],
         btn_book('btn-gold', 'Book your evening'), rev=True, floor='First floor') + f'''
@@ -371,7 +377,7 @@ def menus(P):
       <div class="tx"><p class="eyebrow">{sub}</p><h3>{t}</h3><p>{d}</p><a class="link" href="{REMOTE + pdf}" target="_blank" rel="noopener">View menu (PDF)</a></div>
     </article>''' for i, (t, sub, d, pdf, img) in enumerate(MENUS))
     cards += f'''<article class="mcard rv">
-      <div class="ph"><img src="{IMG('2026/04/bar-candela-latine.jpg', P)}" alt="Cocktails" loading="lazy"></div>
+      <div class="ph">{VID('martini', P)}</div>
       <div class="tx"><p class="eyebrow">Signatures &amp; classics</p><h3>Cocktails</h3><p>Refined classics and signature creations inspired by the vibrant spirit of Latin America, made with premium ingredients to match the energy of the room.</p><span class="soon">Menu coming soon</span></div>
     </article>
     <article class="mcard rv d1">
@@ -447,7 +453,7 @@ def christmas(P):
   <div class="xmas-cards" style="margin-top:0">
     <article class="xcard rv"><div class="ph"><img src="{IMG('2026/09/Restaurant-8-scaled.jpg', P)}" alt="" loading="lazy"></div><p class="eyebrow">In the restaurant</p><h3>Festive lunch &amp; dinner</h3><p>Gather friends, family or colleagues in the dining room for the season's long lunches and candlelit dinners, with French technique, Latin warmth and Champagne on the table.</p><a class="go link" href="{BOOK}" target="_blank" rel="noopener">Book a table</a></article>
     <article class="xcard rv d1"><div class="ph"><img src="{IMG('2026/09/PDR4-scaled.jpg', P)}" alt="" loading="lazy"></div><p class="eyebrow">El Cielo · Second floor</p><h3>Private Christmas parties</h3><p>Take over our private room with festive menus tailored to your group, and a team looking after every detail from the welcome drink to the last toast.</p><div class="facts"><div><b>20</b><span>Seated</span></div><div><b>40+</b><span>Standing</span></div></div><a class="go link" href="#enquire" data-occasion="Christmas party">Plan your party</a></article>
-    <article class="xcard rv d2"><div class="ph"><img src="{IMG('2026/04/bar-candela-latine.jpg', P)}" alt="" loading="lazy"></div><p class="eyebrow">La Candela · First floor</p><h3>The after-party</h3><p>When dinner's done, the night carries on upstairs with DJs, cocktails and Champagne. There's no need to leave the building to keep celebrating.</p><a class="go link" href="#enquire" data-occasion="Christmas party">Enquire for groups</a></article>
+    <article class="xcard rv d2"><div class="ph">{VID('negroni', P)}</div><p class="eyebrow">La Candela · First floor</p><h3>The after-party</h3><p>When dinner's done, the night carries on upstairs with DJs, cocktails and Champagne. There's no need to leave the building to keep celebrating.</p><a class="go link" href="#enquire" data-occasion="Christmas party">Enquire for groups</a></article>
   </div>
   <div class="sec-head" style="margin-top:clamp(90px,10vw,140px)"><p class="eyebrow rv">Group sizes</p><h2 class="rv d1">Find your <em>space</em></h2></div>
   <div class="sizes rv">
@@ -496,6 +502,7 @@ GALLERY = [
  ('2026/04/bar-candela-latine.jpg','candela','A cocktail at La Candela'),
  ('photos/dessert-caramel.jpg','food','Dessert'),
  ('photos/wine.jpg','candela','Wine'),
+ ('photos/terrace-guests.jpg','terrace','Lunch on the terrace'),
 ]
 def gallery(P):
     items = ''.join(f'<a href="{IMG(p, P)}" data-c="{c}"><img src="{IMG(p, P)}" alt="{a}" loading="lazy"></a>' for p, c, a in GALLERY)
@@ -670,7 +677,7 @@ def notfound(P):
 # ---------------------------------------------------------------- BUILD
 if __name__ == '__main__':
     # clean only what this script generates (OUT is the repo root)
-    GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images',
+    GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images', 'video',
            'the-restaurant', 'our-menu', 'private-dining-room', 'christmas', 'portfolio-gallery', 'about-us', 'careers',
            'press', 'lacav', 'lucky-7', 'reservation-policy', 'legal', 'journal', 'team', 'main-home', '404tmp']
     for g in GEN:
@@ -680,6 +687,7 @@ if __name__ == '__main__':
     os.makedirs(os.path.join(OUT, 'css')); os.makedirs(os.path.join(OUT, 'js'))
     open(os.path.join(OUT, 'css/site.css'), 'w').write(open(os.path.join(HERE, 'base.css')).read() + open(os.path.join(HERE, 'pages.css')).read())
     shutil.copy(os.path.join(HERE, 'site.js'), os.path.join(OUT, 'js/site.js'))
+    shutil.copytree(os.path.join(HERE, 'video'), os.path.join(OUT, 'video'))
     if LOCAL:
         if not os.path.isdir(os.path.join(HERE, 'images')): sys.exit('Run ./fetch_images.sh first')
         os.makedirs(os.path.join(OUT, 'images'))

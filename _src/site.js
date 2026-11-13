@@ -9,6 +9,16 @@
   function onScroll(){var y=window.scrollY;if(nav&&!plain)nav.classList.toggle('solid',y>window.innerHeight*0.55);if(mbook)mbook.classList.toggle('show',y>window.innerHeight*0.5)}
   window.addEventListener('scroll',onScroll,{passive:true});onScroll();
 
+  // videos: load when near the screen, play while visible, pause when not
+  var vids=$$('video.vid'),reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function load(v){if(!v.getAttribute('src')){v.src=v.getAttribute('data-src');}}
+  function play(v){if(reduce)return;load(v);var p=v.play();if(p&&p.catch)p.catch(function(){})}
+  if('IntersectionObserver' in window){
+    var vo=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)play(e.target);else if(!e.target.paused)e.target.pause()})},{rootMargin:'200px 0px'});
+    vids.forEach(function(v){if(v.offsetParent!==null||v.hasAttribute('data-eager'))vo.observe(v)});
+  } else {vids.forEach(play)}
+  vids.filter(function(v){return v.hasAttribute('data-eager')&&v.offsetParent!==null}).forEach(play);
+
   // hero slideshow
   var slides=$$('.hero .slide'),i=0;
   if(slides.length>1)setInterval(function(){slides[i].classList.remove('on');i=(i+1)%slides.length;slides[i].classList.add('on')},6500);
