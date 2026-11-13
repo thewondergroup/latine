@@ -307,11 +307,12 @@ def offer(P, compact=False):
              '<li><span>Saturday</span><b>2pm – 5pm</b></li></ul>')
     return ('<section class="offer' + (' compact' if compact else '') + '" id="champagne-oysters">'
             '<div class="of-ph rv"><img src="' + IMG('2026/04/ChatGPT-Image-Apr-15-2026-10_41_32-PM.png', P) + '" alt="A dozen oysters" loading="lazy">'
-            '<div class="of-badge"><small>Only</small>£60</div></div>'
+            '</div>'
             '<div class="of-copy">'
             '<p class="eyebrow rv">Champagne &amp; oysters</p>'
             '<h2 class="rv d1">A bottle of Champagne,<br><em>a dozen oysters</em></h2>'
-            '<p class="rv d2">Twelve oysters from the crudo bar and a bottle of Champagne to share, for £60. Three afternoons a week.</p>'
+            '<p class="of-price rv d1"><span>£60</span></p>'
+            '<p class="rv d2">Twelve oysters from the crudo bar with a bottle of Champagne to share. Three afternoons a week.</p>'
             '<div class="rv d2">' + times + '</div>'
             '<div class="rv d3" style="margin-top:34px;display:flex;gap:12px;flex-wrap:wrap">' + btn_book('btn-gold', 'Book your table') + '</div>'
             '</div></section>')
