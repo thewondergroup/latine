@@ -1,0 +1,81 @@
+{
+ "title": "Menu Gran Latine",
+ "price": "120",
+ "sections": [
+  {
+   "title": "Crudo",
+   "items": [
+    {
+     "name": "Ceviche de chou-fleur rôti",
+     "desc": "Cauliflower ceviche, 24-month Parmesan leche de tigre, tapioca biscuit",
+     "tags": [
+      "v"
+     ]
+    },
+    {
+     "name": "Hot prawn ceviche",
+     "desc": "Ají amarillo leche de tigre, sweet potato purée, roasted avocado, cancha powder, chalaca"
+    },
+    {
+     "name": "Sea bass tiradito",
+     "desc": "Passion fruit leche de tigre, brûléed sweet potato, corn cake, fresh red onion, coriander"
+    }
+   ]
+  },
+  {
+   "title": "Starter",
+   "items": [
+    {
+     "name": "Lentil salad",
+     "desc": "Quail egg, roasted Datterino tomatoes, rocket, roasted avocado, goat’s cheese, sweetcorn",
+     "tags": [
+      "v"
+     ]
+    },
+    {
+     "name": "Latine chicken stew vol-au-vent",
+     "desc": "Chicken and guasacaca sauce"
+    },
+    {
+     "name": "Foie gras tostada",
+     "desc": "Roasted pineapple, Sauternes wine reduction"
+    }
+   ]
+  },
+  {
+   "title": "Main",
+   "items": [
+    {
+     "name": "Cauliflower steak",
+     "desc": "Cauliflower, anticucho sauce, Riviera chimichurri"
+    },
+    {
+     "name": "Beef filet",
+     "desc": "Chargrilled beef fillet, café de Lima sauce"
+    },
+    {
+     "name": "Turkey roulade",
+     "desc": "Dried peach, hazelnuts, kale, confit onion, red berry and chipotle sauce"
+    },
+    {
+     "name": "Butterflied sea bass",
+     "desc": "Latine bouillabaisse sauce, mussels, prawns, green herb oil"
+    }
+   ],
+   "note": "Served with purée de pommes de terre and broccolini"
+  },
+  {
+   "title": "Dessert",
+   "items": [
+    {
+     "name": "Chocolate fondant",
+     "desc": "Red berries, chipotle chilli & milk ice cream"
+    },
+    {
+     "name": "Tarte tatin au plantain",
+     "desc": "Coffee caramel & brown butter ice cream"
+    }
+   ]
+  }
+ ]
+}

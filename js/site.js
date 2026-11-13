@@ -27,6 +27,13 @@
     window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(drift)}},{passive:true});drift();
   }
 
+  // menu tabs: highlight the section in view
+  var mt=$$('.mtabs a');
+  if(mt.length&&'IntersectionObserver' in window){
+    var mo=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var id=e.target.id;mt.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+id)});var on=$('.mtabs a.on');if(on&&on.scrollIntoView&&window.innerWidth<700){on.parentNode.scrollTo({left:on.offsetLeft-20,behavior:'smooth'})}}})},{rootMargin:'-45% 0px -50% 0px'});
+    $$('.mpage').forEach(function(sec){mo.observe(sec)});
+  }
+
   // hero slideshow
   var slides=$$('.hero .slide'),i=0;
   if(slides.length>1)setInterval(function(){slides[i].classList.remove('on');i=(i+1)%slides.length;slides[i].classList.add('on')},6500);
