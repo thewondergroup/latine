@@ -685,3 +685,28 @@ video.vid{display:block;width:100%;height:100%;object-fit:cover;background:#1a15
   .minter{grid-template-columns:1fr}
   .minter div:nth-child(2){display:none}
 }
+
+/* ===== champagne & oysters offer ===== */
+.offer{display:grid;grid-template-columns:1fr 1fr;background:var(--forest);color:var(--cream);align-items:stretch}
+.of-ph{position:relative;overflow:hidden;min-height:560px}
+.of-ph img{position:absolute;inset:0}
+.of-badge{position:absolute;right:clamp(20px,4vw,50px);bottom:clamp(20px,4vw,50px);width:clamp(120px,12vw,160px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#f3e3b8,#c9a865 55%,#9c7a3c);color:var(--forest);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:clamp(40px,4vw,54px);line-height:1;box-shadow:0 18px 50px rgba(0,0,0,.35);transform:rotate(-8deg)}
+.of-badge small{font-family:var(--sans);font-size:10px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:4px}
+.of-copy{padding:clamp(60px,8vw,120px) clamp(30px,6vw,100px);display:flex;flex-direction:column;justify-content:center}
+.of-copy .eyebrow{color:var(--gold)}
+.of-copy h2{margin-top:16px;font-size:clamp(40px,4.4vw,68px)}
+.of-copy h2 em{color:var(--gold-l)}
+.of-copy>p{margin-top:22px;color:rgba(243,238,227,.74);max-width:460px}
+.of-times{list-style:none;margin-top:30px;max-width:420px;border-top:1px solid rgba(185,155,98,.3)}
+.of-times li{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(185,155,98,.3)}
+.of-times span{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:rgba(243,238,227,.7)}
+.of-times b{font-family:var(--serif);font-weight:400;font-size:22px;color:var(--gold-l)}
+.offer.compact{max-width:1100px;margin:0 auto clamp(70px,8vw,110px)}
+.offer.compact .of-ph{min-height:440px}
+.offer.compact .of-copy{padding:clamp(40px,5vw,70px)}
+@media (max-width:900px){
+  .offer{grid-template-columns:1fr}
+  .of-ph,.offer.compact .of-ph{min-height:0;aspect-ratio:4/3}
+}
