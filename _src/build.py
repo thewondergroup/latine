@@ -299,10 +299,28 @@ def press_marquee():
 </section>
 '''
 
+
+def offer(P, compact=False):
+    times = ('<ul class="of-times">'
+             '<li><span>Thursday</span><b>5pm – 7pm</b></li>'
+             '<li><span>Friday</span><b>5pm – 7pm</b></li>'
+             '<li><span>Saturday</span><b>2pm – 5pm</b></li></ul>')
+    return ('<section class="offer' + (' compact' if compact else '') + '" id="champagne-oysters">'
+            '<div class="of-ph rv"><img src="' + IMG('2026/04/ChatGPT-Image-Apr-15-2026-10_41_32-PM.png', P) + '" alt="A dozen oysters" loading="lazy">'
+            '<div class="of-badge"><small>Only</small>£60</div></div>'
+            '<div class="of-copy">'
+            '<p class="eyebrow rv">Champagne &amp; oysters</p>'
+            '<h2 class="rv d1">A bottle of Champagne,<br><em>a dozen oysters</em></h2>'
+            '<p class="rv d2">Twelve oysters from the crudo bar and a bottle of Champagne to share, for £60. Three afternoons a week.</p>'
+            '<div class="rv d2">' + times + '</div>'
+            '<div class="rv d3" style="margin-top:34px;display:flex;gap:12px;flex-wrap:wrap">' + btn_book('btn-gold', 'Book your table') + '</div>'
+            '</div></section>')
+
 # ---------------------------------------------------------------- HOME
 def home(P):
     b = open(os.path.join(HERE, 'home_body.html')).read()
     b = re.sub(r'https://latinemayfair\.com/wp-content/uploads/([^"\)]+\.(?:jpe?g|png|webp))', lambda m: IMG(m.group(1), P), b)
+    b = b.replace('{{OFFER}}', offer(P))
     b = re.sub(r'\{\{VID:([a-z-]+)(:eager)?\}\}', lambda m: VID(m.group(1), P, bool(m.group(2))), b)
     b = b.replace('<section class="xmas on-dark" id="christmas">', '<section class="xmas on-dark sparkles" id="christmas">')
     b = b.replace('href="https://latinemayfair.com/lucky-7/"', f'href="{P}lucky-7/"')
@@ -345,6 +363,7 @@ def restaurant(P):
         'Pull up a stool for a glass of Champagne and a few plates, or start the evening here before moving to your table.'],
         f'<a class="link" href="{P}our-menu/" style="color:var(--terra)">View the menus</a>', rev=True, wide=True) + '''
 </section>
+''' + offer(P) + '''
 <section class="sec tint" id="terrace">
 ''' + split(P, '2026/09/Terrace-2-scaled.jpg', 'The terrace', 'A pause<br><em>in the mews</em>', [
         'Tucked into the cobbled courtyard of Lancashire Court, our terrace is a quiet corner moments from the bustle of Bond Street.',
@@ -472,6 +491,7 @@ def menus(P):
 <section class="mpage" id="carte">
   <div class="mhead"><p class="eyebrow rv">Lunch &amp; dinner</p><h2 class="rv d1">À la <em>carte</em></h2>
   <p class="rv d2">Crudo from the bar, plates for sharing and mains from the grill. Dishes change with the seasons.</p></div>
+  {offer(P, True)}
   <div class="mcard-p">{food_menu(P)}</div>
   <div class="mside rv">
     <a href="{REMOTE}2026/09/Lunch-Menu_LATINE09.pdf" target="_blank" rel="noopener"><span>Set lunch</span><small>Two or three courses · PDF</small></a>
