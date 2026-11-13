@@ -1,0 +1,241 @@
+[
+ {
+  "title": "Crudo",
+  "items": [
+   {
+    "name": "TIRADITO DE DAURADE",
+    "price": "21",
+    "desc": "Sea bream sashimi, coconut leche de tigre, roasted avocado, mint",
+    "tags": []
+   },
+   {
+    "name": "CEVICHE DE LOUP DE MER",
+    "price": "23",
+    "desc": "Sea bass ceviche, passion fruit leche de tigre, popcorn",
+    "tags": []
+   },
+   {
+    "name": "CEVICHE DE CHOU-FLEUR RÔTI",
+    "price": "17",
+    "desc": "Cauliflower ceviche, 24-month Parmesan leche de tigre, tapioca biscuit",
+    "tags": [
+     "v"
+    ]
+   },
+   {
+    "name": "TIRADITO DE HAMACHI",
+    "price": "25",
+    "desc": "Hamachi sashimi, pineapple aguachile, sweetcorn blinis",
+    "tags": []
+   },
+   {
+    "name": "CEVICHE DE CREVETTES ROUGES",
+    "price": "35",
+    "desc": "Red prawn ceviche, mango & yuzu leche de tigre, plantain chips",
+    "tags": []
+   },
+   {
+    "name": "STEAK TARTARE",
+    "price": "24",
+    "desc": "Hand-cut steak tartare, truffle mayonnaise & crisp potato pavé",
+    "tags": []
+   },
+   {
+    "name": "TIRADITO DE THON",
+    "price": "23",
+    "desc": "Tuna sashimi, lime & yuzu dressing, coconut cream, jalapeño oil",
+    "tags": []
+   },
+   {
+    "name": "TARTARE DE THON",
+    "price": "26",
+    "desc": "Tuna tartare, truffle dressing, ripe mango, datterino tomatoes, cashew nuts",
+    "tags": []
+   }
+  ]
+ },
+ {
+  "title": "Oysters",
+  "items": [
+   {
+    "name": "Spéciales de Claire",
+    "price": "26",
+    "desc": "Half dozen",
+    "tags": []
+   },
+   {
+    "name": "Spéciales de Claire",
+    "price": "52",
+    "desc": "Dozen",
+    "tags": []
+   }
+  ]
+ },
+ {
+  "title": "Starters",
+  "items": [
+   {
+    "name": "ESCARGOTS",
+    "price": "22",
+    "desc": "Baked snails, chimichurri butter",
+    "tags": []
+   },
+   {
+    "name": "TACOS DE BŒUF BOURGUIGNON x2",
+    "price": "17",
+    "desc": "Bœuf Bourguignon stew, pickled pineapple, sweet potato purée",
+    "tags": []
+   },
+   {
+    "name": "CROQUETTES DE CANARD x4",
+    "price": "12",
+    "desc": "Duck croquettes, guava chipotle chutney",
+    "tags": []
+   },
+   {
+    "name": "GÂTEAU DE MAÏS, BURRATA  x2",
+    "price": "12",
+    "desc": "Corn cake, burrata",
+    "tags": [
+     "v"
+    ]
+   },
+   {
+    "name": "MOULES LATINE",
+    "price": "22",
+    "desc": "Cornish mussels, Latine marinière, fries",
+    "tags": []
+   },
+   {
+    "name": "PÃO DE QUEIJO x2",
+    "price": "12",
+    "desc": "Brazilian cheese bread, Camembert filling",
+    "tags": []
+   },
+   {
+    "name": "SALADE DE BURRATA",
+    "price": "21",
+    "desc": "Creamy burrata, mango vinaigrette, cashew",
+    "tags": [
+     "v"
+    ]
+   },
+   {
+    "name": "SALADE DE CANARD",
+    "price": "23",
+    "desc": "Duck salad, goat’s cheese, raspberry vinaigrette, almonds",
+    "tags": []
+   }
+  ]
+ },
+ {
+  "title": "Mains",
+  "items": [
+   {
+    "name": "CHOU HISPI GRILLÉ À LA BRAISE",
+    "price": "25",
+    "desc": "Grilled hispi cabbage, Peruvian curry sauce, Comté cheese",
+    "tags": [
+     "v"
+    ]
+   },
+   {
+    "name": "MAGRET DE CANARD",
+    "price": "35",
+    "desc": "Pan-fried duck magret, confit potimarron, guava sauce",
+    "tags": []
+   },
+   {
+    "name": "CALAMARS GRILLÉS",
+    "price": "33",
+    "desc": "Grilled squid, ají panca chilli, sweetcorn purée",
+    "tags": []
+   },
+   {
+    "name": "RIBEYE 1Kg",
+    "price": "130",
+    "desc": "Chargrilled ribeye, chimichurri Béarnaise",
+    "tags": []
+   },
+   {
+    "name": "CÔTELETTES D’AGNEAU",
+    "price": "48",
+    "desc": "Marinated lamb cutlets, plantain ravioli, Andean jus",
+    "tags": []
+   },
+   {
+    "name": "FILET DE BŒUF 200g",
+    "price": "52",
+    "desc": "Chargrilled beef fillet, Périgord sauce, dark chocolate",
+    "tags": []
+   },
+   {
+    "name": "POULPE GRILLÉ",
+    "price": "35",
+    "desc": "Grilled octopus, Puy lentils, olive sauce",
+    "tags": []
+   },
+   {
+    "name": "LOUP DE MER",
+    "price": "46",
+    "desc": "Wild sea bass, ají amarillo beurre blanc",
+    "tags": []
+   },
+   {
+    "name": "SUPRÊME DE POULET",
+    "price": "32",
+    "desc": "Roast chicken, wild mushroom, sauce verte",
+    "tags": []
+   }
+  ]
+ },
+ {
+  "title": "Sides",
+  "items": [
+   {
+    "name": "TIAN DE LÉGUMES",
+    "price": "12",
+    "desc": "Layered Provençal vegetables, tomato fondue & herbs",
+    "tags": [
+     "vg"
+    ]
+   },
+   {
+    "name": "BROCCOLINI",
+    "price": "11",
+    "desc": "Grilled broccoli, herb butter",
+    "tags": [
+     "v"
+    ]
+   },
+   {
+    "name": "PURÉE DE POMMES DE TERRE",
+    "price": "10",
+    "desc": "Creamy mashed potatoes",
+    "tags": [
+     "v"
+    ]
+   },
+   {
+    "name": "SALADE VERTE",
+    "price": "10",
+    "desc": "Green salad, tomatoes, onions",
+    "tags": [
+     "vg"
+    ]
+   },
+   {
+    "name": "POMMES FRITES",
+    "price": "8",
+    "desc": "French fries",
+    "tags": [
+     "vg"
+    ]
+   }
+  ],
+  "notes": [
+   "Add Comté Cheese — £3",
+   "Add Truffle — £7"
+  ]
+ }
+]

@@ -376,42 +376,137 @@ def restaurant(P):
 ''' + visit_band(P)
 
 # ---------------------------------------------------------------- MENUS
-MENUS = [
- ('À la carte', 'Lunch &amp; dinner', 'Refined French technique and the vibrant flavours of Latin America. Seasonal ingredients, fresh seafood and carefully prepared dishes, designed to be enjoyed from lunch through to dinner.', '2026/09/Menu-Summer-Latine-Aug-2.pdf', '2026/04/ChatGPT-Image-Apr-16-2026-09_44_31-AM.png'),
- ('Set lunch', 'Two or three courses', 'A lighter, quicker option, perfect for a midday break in Mayfair. Choose two or three courses from a selection of seasonal dishes.', '2026/09/Lunch-Menu_LATINE09.pdf', '2026/04/ChatGPT-Image-Apr-15-2026-10_36_38-PM.png'),
- ('Desserts', 'French pastry, Latin accent', 'Refined sweet creations bringing together French pastry technique with subtle Latin American influences: elegant, balanced and indulgent.', '2026/09/Dessert-menu-Final-16-06-26-1.pdf-4.pdf', 'photos/dessert-caramel.jpg'),
- ('Wine', 'The list', 'A carefully curated selection from renowned vineyards and emerging producers around the world, balancing classic regions with distinctive discoveries.', '2026/06/Wine-List.pdf', 'photos/wine.jpg'),
-]
+import json
+def MJ(n): return json.load(open(os.path.join(HERE, 'menus', n + '.json'), encoding='utf-8'))
+def esc(t): return html.escape(t, quote=False)
+def price(p): return '' if not p else ('£' + (p[:-2] if p.endswith('.0') else p))
+def tags(t): return ''.join(f'<span class="tag">{x.upper()}</span>' for x in (t or []))
+
+def dish(i, priced=True):
+    pr = '<span class="pr">' + price(i.get('price')) + '</span>' if priced else ''
+    d = '<p>' + esc(i['desc']) + '</p>' if i.get('desc') else ''
+    return '<div class="dish rv"><div class="dish-top"><h4>' + esc(i['name']) + tags(i.get('tags')) + '</h4>' + pr + '</div>' + d + '</div>'
+
+ORN = '<svg class="orn" viewBox="0 0 84 14" fill="none" stroke="currentColor" stroke-width=".8"><path d="M0 7h34M50 7h34"/><path d="M42 1l6 6-6 6-6-6z"/></svg>'
+
+def food_menu(P):
+    food = MJ('food')
+    out = []
+    breaks = {'Oysters': ('photos/prawns.jpg', 'photos/oysters.jpg'), 'Mains': ('photos/beef-wide.jpg', None)}
+    for s in food:
+        cls = 'msec two' if len(s['items']) > 3 else 'msec'
+        notes = ''.join(f'<p class="mnote">{esc(n)}</p>' for n in s.get('notes', []))
+        if s['title'] in breaks:
+            a, b2 = breaks[s['title']]
+            imgs = ''.join('<div><img src="' + IMG(x, P) + '" alt="" loading="lazy"></div>' for x in (a, b2) if x)
+            out.append('<div class="minter rv">' + imgs + '</div>')
+        out.append(f'<section class="{cls}"><h3 class="mh rv">{esc(s["title"])}</h3>{ORN}<div class="dishes">{"".join(dish(i) for i in s["items"])}</div>{notes}</section>')
+    return ''.join(out)
+
+def drinks_menu(P, which):
+    d = MJ('drinks')
+    if which == 'cocktails':
+        secs = [x for x in d if x['title'] in ('Signature cocktails', 'Apéritifs', 'Non-alcoholic')]
+        secs.sort(key=lambda x: ['Signature cocktails', 'Apéritifs', 'Non-alcoholic'].index(x['title']))
+        o = ''
+        for x in secs:
+            note = '<p class="mnote">' + esc(x['note']) + '</p>' if x.get('note') else ''
+            o += '<section class="msec' + (' two' if len(x['items']) > 4 else '') + '"><h3 class="mh rv">' + esc(x['title']) + '</h3>' + ORN + '<div class="dishes">' + ''.join(dish(i) for i in x['items']) + '</div>' + note + '</section>'
+        return o
+    secs = [x for x in d if x['title'] not in ('Signature cocktails', 'Apéritifs', 'Non-alcoholic')]
+    o = '<div class="spirits">'
+    for x in secs:
+        lis = ''
+        for i in x['items']:
+            em = '<em>' + esc(i['desc']) + '</em>' if i.get('desc') else ''
+            lis += '<li><span>' + esc(i['name']) + em + '</span><b>' + price(i['price']) + '</b></li>'
+        o += '<div class="sp rv"><h4>' + esc(x['title']) + '</h4><ul>' + lis + '</ul></div>'
+    return o + '</div><p class="mnote">Spirits served at 50ml (25ml on request).</p>'
+
+def wine_menu(P):
+    w = MJ('wine')
+    def rows(items): return ''.join(f'<li><span class="vt">{i["vintage"]}</span><span class="wn">{esc(i["name"])}</span><b>{price(i["price"])}</b></li>' for i in items)
+    def body(sec):
+        o = ''
+        for r in sec['regions']:
+            if r['title']: o += f'<h5 class="wr">{esc(r["title"])}</h5>'
+            for x in r['subs']:
+                if x['title']: o += f'<h6 class="ws">{esc(x["title"])}</h6>'
+                o += f'<ul class="wl">{rows(x["items"])}</ul>'
+        return o
+    glass = w[0]
+    out = f'<section class="msec"><h3 class="mh rv">By the glass</h3>{ORN}<div class="wine-glass">{body(glass)}</div><p class="mnote">{esc(glass.get("note", ""))}</p></section>'
+    out += '<section class="msec"><h3 class="mh rv">By the bottle</h3>' + ORN + '<div class="wacc">'
+    for i, sec in enumerate(w[1:]):
+        n = sum(len(x['items']) for r in sec['regions'] for x in r['subs'])
+        out += f'<details class="wd rv"{" open" if i == 0 else ""}><summary><span>{esc(sec["title"])}</span><small>{n} wines</small></summary><div class="wd-b">{body(sec)}</div></details>'
+    return out + '</div></section>'
+
+def christmas_menu(P, compact=False):
+    xm = MJ('christmas')
+    secs = ''.join(f'<div class="xm-sec"><h4 class="xm-h">{esc(s["title"])}</h4>' + ''.join(
+        f'<div class="xm-i"><h5>{esc(i["name"])}{tags(i.get("tags"))}</h5><p>{esc(i["desc"])}</p></div>' for i in s['items'])
+        + (f'<p class="xm-note">{esc(s["note"])}</p>' if s.get('note') else '') + '</div>' for s in xm['sections'])
+    return f"""<div class="xm-card rv">
+      <p class="eyebrow">Christmas &amp; festive season</p>
+      <h3>{esc(xm['title'])}</h3>
+      <p class="xm-price">£{xm['price']} <span>per person</span></p>
+      {ORN}
+      {secs}
+      <p class="xm-foot">All prices include VAT. A discretionary 13.5% service charge will be added to your bill.</p>
+    </div>"""
+
+ALLERGEN = ('(V) Vegetarian · (VG) Vegan. Please always inform your server of any allergies or intolerances before ordering. '
+            'Not all ingredients are listed and we cannot guarantee the total absence of allergens; information on the fourteen legal allergens is available on request. '
+            'All prices include VAT. A discretionary 13.5% service charge will be added to your bill.')
+
 def menus(P):
-    cards = ''.join(f'''<article class="mcard rv{' d1' if i % 2 else ''}">
-      <div class="ph"><img src="{IMG(img, P)}" alt="{t}" loading="lazy"></div>
-      <div class="tx"><p class="eyebrow">{sub}</p><h3>{t}</h3><p>{d}</p><a class="link" href="{REMOTE + pdf}" target="_blank" rel="noopener">View menu (PDF)</a></div>
-    </article>''' for i, (t, sub, d, pdf, img) in enumerate(MENUS))
-    cards += f'''<article class="mcard rv">
-      <div class="ph">{VID('martini', P)}</div>
-      <div class="tx"><p class="eyebrow">Signatures &amp; classics</p><h3>Cocktails</h3><p>Refined classics and signature creations inspired by the vibrant spirit of Latin America, made with premium ingredients to match the energy of the room.</p><span class="soon">Menu coming soon</span></div>
-    </article>
-    <article class="mcard rv d1">
-      <div class="ph"><img src="{IMG('2026/09/PDR5-scaled.jpg', P)}" alt="El Cielo" loading="lazy"></div>
-      <div class="tx"><p class="eyebrow">El Cielo &amp; events</p><h3>Private dining</h3><p>Private dining menus can be tailored to your group and occasion, from seated dinners to canapé receptions.</p><a class="link" href="{P}private-dining-room/#enquire">Enquire</a></div>
-    </article>'''
+    tabs = [('carte', 'À la carte'), ('cocktails', 'Cocktails'), ('wine', 'Wine'), ('bar', 'Spirits &amp; more'), ('christmas-menu', 'Christmas')]
     return phero(P, 'photos/beef-wide.jpg', 'Menus', 'Precision,<br>with <em>passion</em>',
-        'Rooted in French technique, inspired by Latin America. Seasonal produce, fresh seafood and dishes that move easily from lunch to dinner.', btn_book()) + f'''
-<section class="sec tint">
-  <div class="menu-list">{cards}</div>
-  <p class="note rv">Menus change with the seasons; dishes may vary. Please tell our team about any allergies or dietary requirements before ordering.</p>
-</section>
-<section class="sec">
-  <div class="sec-head"><p class="eyebrow rv">From the kitchen</p><h2 class="rv d1">A taste of <em>Latine</em></h2></div>
-  <div class="strip rv">
-    <div><img src="{IMG('2026/04/ChatGPT-Image-Apr-15-2026-10_41_32-PM.png', P)}" alt="Oysters" loading="lazy"></div>
-    <div><img src="{IMG('2026/04/ChatGPT-Image-Apr-16-2026-09_33_05-AM.png', P)}" alt="Squid ink dish" loading="lazy"></div>
-    <div><img src="{IMG('2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png', P)}" alt="Beef with jus" loading="lazy"></div>
-    <div><img src="{IMG('2026/09/DSC_6256-copy-2-scaled.jpg', P)}" alt="Tarte tatin on a Latine plate" loading="lazy"></div>
+        'Rooted in French technique, inspired by Latin America. Crudo and seafood, plates from the grill, a cocktail list built around Latin spirits and a cellar of great houses and new discoveries.',
+        btn_book() + '<a class="btn btn-line" href="#carte">Explore the menus</a>') + f"""
+<nav class="mtabs" id="mtabs" aria-label="Menus">
+  <div class="mtabs-in">{''.join(f'<a href="#{a}">{t}</a>' for a, t in tabs)}</div>
+</nav>
+
+<section class="mpage" id="carte">
+  <div class="mhead"><p class="eyebrow rv">Lunch &amp; dinner</p><h2 class="rv d1">À la <em>carte</em></h2>
+  <p class="rv d2">Crudo from the bar, plates for sharing and mains from the grill. Dishes change with the seasons.</p></div>
+  <div class="mcard-p">{food_menu(P)}</div>
+  <div class="mside rv">
+    <a href="{REMOTE}2026/09/Lunch-Menu_LATINE09.pdf" target="_blank" rel="noopener"><span>Set lunch</span><small>Two or three courses · PDF</small></a>
+    <a href="{REMOTE}2026/09/Dessert-menu-Final-16-06-26-1.pdf-4.pdf" target="_blank" rel="noopener"><span>Desserts</span><small>French pastry, Latin accent · PDF</small></a>
   </div>
-  <div style="text-align:center;margin-top:60px" class="rv">{btn_book()}</div>
+  <p class="allergen">{ALLERGEN}</p>
 </section>
-'''
+
+<section class="mpage dark" id="cocktails">
+  <div class="mhead"><p class="eyebrow rv">The bar</p><h2 class="rv d1">Cocktails</h2>
+  <p class="rv d2">Signatures built around tequila, mezcal, pisco and cachaça, French aperitifs and serious non-alcoholic serves.</p></div>
+  <div class="mwith-vid">
+    <div class="mvid rv">{VID('martini', P)}</div>
+    <div class="mcard-p">{drinks_menu(P, 'cocktails')}</div>
+  </div>
+</section>
+
+<section class="mpage" id="wine">
+  <div class="mhead"><p class="eyebrow rv">The cellar</p><h2 class="rv d1">Wine</h2>
+  <p class="rv d2">Burgundy and Bordeaux beside Mendoza, Patagonia and the Uco Valley. Coravin pours of fine wines by the glass.</p></div>
+  <div class="mcard-p wide">{wine_menu(P)}</div>
+</section>
+
+<section class="mpage dark" id="bar">
+  <div class="mhead"><p class="eyebrow rv">Back bar</p><h2 class="rv d1">Spirits &amp; <em>more</em></h2></div>
+  <div class="mcard-p wide">{drinks_menu(P, 'spirits')}</div>
+</section>
+
+<section class="mpage xmas-m" id="christmas-menu">
+  <div class="mhead"><p class="eyebrow rv">Christmas 2026</p><h2 class="rv d1">The festive <em>menu</em></h2>
+  <p class="rv d2">Served through the festive season in the restaurant and for private parties in El Cielo.</p></div>
+  {christmas_menu(P)}
+  <div style="text-align:center;margin-top:50px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap" class="rv">{btn_book('btn-solid', 'Book a festive table')}<a class="btn btn-line" href="{P}christmas/#enquire">Plan a Christmas party</a></div>
+</section>
+"""
 
 # ---------------------------------------------------------------- PRIVATE DINING
 def private(P):
@@ -475,12 +570,10 @@ def christmas(P):
   </div>
 </section>
 <section class="sec">
-''' + split(P, '2026/09/PDR2-scaled.jpg', 'Festive menus', 'Menus made<br>for <em>the season</em>', [
-        'Our festive menus bring the Latine kitchen to the Christmas table: French technique, Latin American flavour and plenty of Champagne.',
-        'Menus for groups and private parties are available on request and can be tailored to your numbers, budget and dietary needs. Send an enquiry and we\'ll share the options for your date.'],
-        '<a class="btn btn-solid" href="#enquire" data-occasion="Christmas party">Request festive menus</a>') + '''
+''' + '''<div class="sec-head"><p class="eyebrow rv">Festive menu</p><h2 class="rv d1">Menu <em>Gran Latine</em></h2><p class="rv d2">Our Christmas menu, served in the restaurant and for private parties in El Cielo.</p></div>
+''' + christmas_menu(P) + '''
 </section>
-''' + enquiry(P, 'Christmas party', 'Christmas enquiries', 'Let\'s plan your<br><em>Christmas</em>',
+'''+ enquiry(P, 'Christmas party', 'Christmas enquiries', 'Let\'s plan your<br><em>Christmas</em>',
         'December evenings go quickly. Tell us your preferred date, numbers and plans, and our events team will come back to you with availability and festive menus.') + '''
 <section class="sec">
   <div class="sec-head"><p class="eyebrow rv">Questions</p><h2 class="rv d1">Christmas <em>FAQs</em></h2></div>
