@@ -211,7 +211,7 @@ video.vid{display:block;width:100%;height:100%;object-fit:cover;background:#1a15
 @keyframes tripIn{to{opacity:1;transform:none}}
 .hero{background:#120e0b}
 .hero::after{background:linear-gradient(180deg,rgba(18,14,11,.7) 0%,rgba(18,14,11,.1) 32%,rgba(18,14,11,.2) 55%,rgba(18,14,11,.88) 100%)!important}
-@media (max-width:760px){.trip{grid-template-columns:1fr}.trip .t2,.trip .t3{display:none}}
+@media (max-width:760px){.trip{grid-template-columns:1fr}.trip .t1,.trip .t3{display:none}}
 
 /* bar section */
 .bar-sec{background:#16110e;color:var(--cream);padding:clamp(100px,12vw,170px) var(--pad);overflow:hidden}
