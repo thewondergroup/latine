@@ -23,7 +23,7 @@
   var bands=$$('.parallax');
   if(bands.length&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){
     var tick=false;
-    function drift(){tick=false;var vh=window.innerHeight;bands.forEach(function(b){var r=b.getBoundingClientRect();if(r.bottom<0||r.top>vh)return;var pr=(r.top+r.height/2-vh/2)/vh;var img=b.querySelector('img');if(img)img.style.transform='translate3d(0,'+(pr*-9)+'%,0)'})}
+    function drift(){tick=false;var vh=window.innerHeight;bands.forEach(function(b){var r=b.getBoundingClientRect();if(r.bottom<0||r.top>vh)return;var pr=(r.top+r.height/2-vh/2)/vh;b.querySelectorAll('img').forEach(function(img){img.style.transform='translate3d(0,'+(pr*-9)+'%,0)'})})}
     window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(drift)}},{passive:true});drift();
   }
 
