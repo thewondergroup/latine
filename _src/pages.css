@@ -447,3 +447,7 @@ video.vid{display:block;width:100%;height:100%;object-fit:cover;background:#1a15
   .offer{grid-template-columns:1fr}
   .of-ph,.offer.compact .of-ph{min-height:0;aspect-ratio:4/3}
 }
+.of-badge{display:none}
+.of-price{display:flex;align-items:baseline;gap:16px;margin-top:22px}
+.of-price span{font-family:var(--serif);font-weight:300;font-size:clamp(44px,4vw,58px);line-height:1;color:var(--gold-l)}
+.of-price small{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(243,238,227,.6)}
