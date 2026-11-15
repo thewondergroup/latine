@@ -9,7 +9,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Christmas Parties &amp; Festive Dining in Mayfair | Latine">
 <meta property="og:description" content="Christmas at Latine Mayfair: festive lunches and dinners, private Christmas parties in El Cielo for up to 20 seated or 40+ standing, and late nights at La Candela.">
-<meta property="og:image" content="https://latinemayfair.com/wp-content/uploads/2026/09/PDR1-scaled.jpg">
+<meta property="og:image" content="https://latinemayfair.com/images/el-cielo-table.jpg">
 <meta property="og:url" content="https://latinemayfair.com/christmas/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,8 +85,8 @@
       <h2 class="rv d1">Let's plan your<br><em>Christmas</em></h2>
       <p class="rv d2">December evenings go quickly. Tell us your preferred date, numbers and plans, and our events team will come back to you with availability and festive menus.</p>
     </div>
-    <!-- TODO before go-live: send to Latine's events inbox + log to Google Sheet -->
-    <form class="enq rv d2" id="enqForm">
+    <form class="enq rv d2" id="enqForm" action="/send.php" method="post">
+      <input type="hidden" name="form" value="Events enquiry"><div class="hp" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="f full"><label>Occasion</label><div class="chips" id="chips"><input type="radio" name="occasion" id="o0" value="Christmas party" checked><label for="o0">Christmas party</label><input type="radio" name="occasion" id="o1" value="Corporate dinner"><label for="o1">Corporate dinner</label><input type="radio" name="occasion" id="o2" value="Birthday"><label for="o2">Birthday</label><input type="radio" name="occasion" id="o3" value="Celebration"><label for="o3">Celebration</label><input type="radio" name="occasion" id="o4" value="Other"><label for="o4">Something else</label></div></div>
       <div class="f"><label for="n">Name</label><input id="n" name="name" required autocomplete="name"></div>
       <div class="f"><label for="c">Company (optional)</label><input id="c" name="company" autocomplete="organization"></div>
@@ -144,7 +144,7 @@
       <p style="font-size:14px;line-height:1.9">Monday – Saturday<br>12pm – midnight<br>Closed Sunday</p>
       <h4 style="margin-top:30px">Invitations &amp; news</h4>
       <p style="font-size:14px">New menus, events and LACAV, opening soon.</p>
-      <form class="news"><input type="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
+      <form class="news" action="/send.php" method="post"><input type="hidden" name="form" value="Newsletter sign-up"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
     </div>
   </div>
   <div class="f-bot">

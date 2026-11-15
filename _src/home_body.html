@@ -187,8 +187,8 @@
       <h2 class="rv d1">Tell us about your <em>occasion</em></h2>
       <p class="rv d2">Share a few details and our events team will come back to you with availability, menus and ideas for your day.</p>
     </div>
-    <!-- TODO before go-live: point this at Latine's events inbox (Formspree / Apps Script → Google Sheet). -->
-    <form class="enq rv d2" id="enqForm">
+    <form class="enq rv d2" id="enqForm" action="/send.php" method="post">
+      <input type="hidden" name="form" value="Events enquiry"><div class="hp" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="f full">
         <label>Occasion</label>
         <div class="chips" id="chips">

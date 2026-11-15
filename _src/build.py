@@ -61,7 +61,7 @@ def head(P, title, desc, path, og):
 <meta property="og:type" content="website">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
-<meta property="og:image" content="{REMOTE + og}">
+<meta property="og:image" content="{SITE}images/{PHOTOS.get(os.path.basename(og), os.path.basename(og))}">
 <meta property="og:url" content="{SITE}{path}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -143,7 +143,7 @@ def footer(P):
       <p style="font-size:14px;line-height:1.9">Monday – Saturday<br>12pm – midnight<br>Closed Sunday</p>
       <h4 style="margin-top:30px">Invitations &amp; news</h4>
       <p style="font-size:14px">New menus, events and LACAV, opening soon.</p>
-      <form class="news"><input type="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
+      <form class="news" action="/send.php" method="post"><input type="hidden" name="form" value="Newsletter sign-up"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
     </div>
   </div>
   <div class="f-bot">
@@ -216,8 +216,8 @@ def enquiry(P, occasion='Christmas party', eyebrow='Events &amp; Christmas enqui
       <h2 class="rv d1">{title}</h2>
       <p class="rv d2">{intro}</p>
     </div>
-    <!-- TODO before go-live: send to Latine's events inbox + log to Google Sheet -->
-    <form class="enq rv d2" id="enqForm">
+    <form class="enq rv d2" id="enqForm" action="/send.php" method="post">
+      <input type="hidden" name="form" value="Events enquiry"><div class="hp" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="f full"><label>Occasion</label><div class="chips" id="chips">{chips}</div></div>
       <div class="f"><label for="n">Name</label><input id="n" name="name" required autocomplete="name"></div>
       <div class="f"><label for="c">Company (optional)</label><input id="c" name="company" autocomplete="organization"></div>
@@ -715,7 +715,7 @@ def lacav(P):
     <p class="eyebrow rv">Coming soon to Latine</p>
     <h1 class="rv d1">LACAV</h1>
     <p class="rv d2">Something new is taking shape at Latine. Join the list to be the first to hear when the doors open.</p>
-    <form class="news rv d3"><input type="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
+    <form class="news rv d3" action="/send.php" method="post"><input type="hidden" name="form" value="LACAV waiting list"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
   </div>
 </section>
 '''
@@ -758,7 +758,7 @@ def notfound(P):
 # ---------------------------------------------------------------- BUILD
 if __name__ == '__main__':
     # clean only what this script generates (OUT is the repo root)
-    GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images', 'video',
+    GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images', 'video', 'send.php', '.htaccess',
            'the-restaurant', 'our-menu', 'private-dining-room', 'christmas', 'portfolio-gallery', 'about-us', 'careers',
            'press', 'lacav', 'lucky-7', 'reservation-policy', 'legal', 'journal', 'team', 'main-home', '404tmp']
     for g in GEN:
@@ -769,6 +769,7 @@ if __name__ == '__main__':
     open(os.path.join(OUT, 'css/site.css'), 'w').write(open(os.path.join(HERE, 'base.css')).read() + open(os.path.join(HERE, 'pages.css')).read())
     shutil.copy(os.path.join(HERE, 'site.js'), os.path.join(OUT, 'js/site.js'))
     shutil.copytree(os.path.join(HERE, 'video'), os.path.join(OUT, 'video'))
+    for f in ('send.php', '.htaccess'): shutil.copy(os.path.join(HERE, 'server', f), os.path.join(OUT, f))
     if LOCAL:
         if not os.path.isdir(os.path.join(HERE, 'images')): sys.exit('Run ./fetch_images.sh first')
         os.makedirs(os.path.join(OUT, 'images'))

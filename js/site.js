@@ -62,9 +62,20 @@
   $$('[data-occasion]').forEach(function(a){a.addEventListener('click',function(){setOcc(a.getAttribute('data-occasion'))})});
 
   // forms: front-end only until wired to an inbox / Google Sheet
+  function send(form,ok,fail){
+    var btn=form.querySelector('button[type=submit],button');if(btn){btn.disabled=true;btn.style.opacity=.6}
+    fetch(form.getAttribute('action'),{method:'POST',body:new FormData(form)})
+      .then(function(r){return r.json()}).then(function(j){if(j&&j.ok)ok();else throw 0})
+      .catch(function(){if(btn){btn.disabled=false;btn.style.opacity=1}fail()});
+  }
   var f=$('#enqForm');
-  if(f)f.addEventListener('submit',function(e){e.preventDefault();f.style.display='none';$('#thanks').style.display='block'});
-  $$('.news').forEach(function(n){n.addEventListener('submit',function(e){e.preventDefault();n.innerHTML='<span style="padding:12px 0;color:#D9C49A;font-size:14px">Thank you, you\'re on the list.</span>'})});
+  if(f)f.addEventListener('submit',function(e){e.preventDefault();
+    send(f,function(){f.style.display='none';$('#thanks').style.display='block'},
+      function(){var m=$('#enqErr')||document.createElement('p');m.id='enqErr';m.style.cssText='grid-column:1/-1;color:#A9573A;font-size:14px';
+        m.innerHTML='Sorry, that didn\'t send. Please email <a href="mailto:contact@latinemayfair.com" style="border-bottom:1px solid">contact@latinemayfair.com</a> or call 020 3887 3126.';f.appendChild(m)})});
+  $$('.news').forEach(function(n){n.addEventListener('submit',function(e){e.preventDefault();
+    send(n,function(){n.innerHTML='<span style="padding:12px 0;color:#D9C49A;font-size:14px">Thank you, you\'re on the list.</span>'},
+      function(){n.insertAdjacentHTML('afterend','<p style="font-size:13px;color:#D9C49A;margin-top:8px">Sorry, please try again later.</p>')})})});
 
   // sparkles
   $$('.sparkles').forEach(function(x){for(var k=0;k<26;k++){var s=document.createElement('span');s.className='sparkle';s.style.left=(Math.random()*100)+'%';s.style.top=(Math.random()*60)+'%';s.style.animationDelay=(Math.random()*5)+'s';s.style.animationDuration=(4+Math.random()*4)+'s';x.appendChild(s)}});

@@ -9,7 +9,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="LACAV | Coming Soon to Latine Mayfair">
 <meta property="og:description" content="LACAV is coming soon to Latine Mayfair. Join the list to hear first.">
-<meta property="og:image" content="https://latinemayfair.com/wp-content/uploads/2026/03/LATINE_RESTAURANT1.jpg">
+<meta property="og:image" content="https://latinemayfair.com/images/dining-room.jpg">
 <meta property="og:url" content="https://latinemayfair.com/lacav/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,7 +48,7 @@
     <p class="eyebrow rv">Coming soon to Latine</p>
     <h1 class="rv d1">LACAV</h1>
     <p class="rv d2">Something new is taking shape at Latine. Join the list to be the first to hear when the doors open.</p>
-    <form class="news rv d3"><input type="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
+    <form class="news rv d3" action="/send.php" method="post"><input type="hidden" name="form" value="LACAV waiting list"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
   </div>
 </section>
 <footer>
@@ -85,7 +85,7 @@
       <p style="font-size:14px;line-height:1.9">Monday – Saturday<br>12pm – midnight<br>Closed Sunday</p>
       <h4 style="margin-top:30px">Invitations &amp; news</h4>
       <p style="font-size:14px">New menus, events and LACAV, opening soon.</p>
-      <form class="news"><input type="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
+      <form class="news" action="/send.php" method="post"><input type="hidden" name="form" value="Newsletter sign-up"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
     </div>
   </div>
   <div class="f-bot">
