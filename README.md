@@ -12,7 +12,7 @@ Static site for GitHub Pages, served from the repo root on `main`.
 ## Before go-live
 1. **Images:** real photography lives in `_src/photos/` and is mapped to each image slot in the `PHOTOS` table in `build.py`. To add or swap a photo, drop it in `_src/photos/`, update `PHOTOS`, and run `python3 build.py --local`. Still missing: a dessert shot and people/team shots (those slots reuse other photos for now).
    **Video:** clips live in `_src/video/` (720×1280 H.264 MP4 + poster JPG, encoded from the Jude Black / Latine originals). Use `VID('name', P)` in `build.py` or `{{VID:name}}` in `home_body.html`; site.js lazy-loads them and only plays them on screen.
-2. **Forms (done):** enquiry, newsletter and LACAV forms post to `/send.php` (PHP mail on Krystal) → contact@latinemayfair.com. Change the address at the top of `_src/server/send.php`. Forms only work on the Krystal server (not on GitHub Pages).
+2. **Forms (done):** all forms post to a Google Apps Script web app (code in `_src/server/google-apps-script.gs`, attached to the "Latine Website Enquiries" Google Sheet). Events/Christmas enquiries → Enquiries tab + email to contact@latinemayfair.com; newsletter and LACAV → Sign-ups tab. Change recipients via `NOTIFY` in the script, then redeploy as a new version.
    _Old note:_ the events/Christmas enquiry form and newsletter forms are front-end only. Wire to Latine's events inbox + Google Sheet (search `TODO` in build.py / home_body.html).
 3. **Christmas:** add festive menus, prices and any Christmas Eve / NYE details once supplied (christmas() in build.py).
 4. **Tracking:** add GTM / Meta pixel to `head()` in build.py.

@@ -64,7 +64,8 @@
   // forms: front-end only until wired to an inbox / Google Sheet
   function send(form,ok,fail){
     var btn=form.querySelector('button[type=submit],button');if(btn){btn.disabled=true;btn.style.opacity=.6}
-    fetch(form.getAttribute('action'),{method:'POST',body:new FormData(form)})
+    var fd=new FormData(form);fd.append('page',location.pathname);
+    fetch(form.getAttribute('action'),{method:'POST',body:new URLSearchParams(fd)})
       .then(function(r){return r.json()}).then(function(j){if(j&&j.ok)ok();else throw 0})
       .catch(function(){if(btn){btn.disabled=false;btn.style.opacity=1}fail()});
   }

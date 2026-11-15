@@ -143,7 +143,7 @@ def footer(P):
       <p style="font-size:14px;line-height:1.9">Monday – Saturday<br>12pm – midnight<br>Closed Sunday</p>
       <h4 style="margin-top:30px">Invitations &amp; news</h4>
       <p style="font-size:14px">New menus, events and LACAV, opening soon.</p>
-      <form class="news" action="/send.php" method="post"><input type="hidden" name="form" value="Newsletter sign-up"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
+      <form class="news" action="https://script.google.com/macros/s/AKfycbxJuxezp2XgzqYO22tVfzeNw8EKvIfsY_Isp0xqpPSo44ozssgDz1rbXOA4F3IJ-64tFQ/exec" method="post"><input type="hidden" name="form" value="Newsletter sign-up"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
     </div>
   </div>
   <div class="f-bot">
@@ -216,7 +216,7 @@ def enquiry(P, occasion='Christmas party', eyebrow='Events &amp; Christmas enqui
       <h2 class="rv d1">{title}</h2>
       <p class="rv d2">{intro}</p>
     </div>
-    <form class="enq rv d2" id="enqForm" action="/send.php" method="post">
+    <form class="enq rv d2" id="enqForm" action="https://script.google.com/macros/s/AKfycbxJuxezp2XgzqYO22tVfzeNw8EKvIfsY_Isp0xqpPSo44ozssgDz1rbXOA4F3IJ-64tFQ/exec" method="post">
       <input type="hidden" name="form" value="Events enquiry"><div class="hp" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="f full"><label>Occasion</label><div class="chips" id="chips">{chips}</div></div>
       <div class="f"><label for="n">Name</label><input id="n" name="name" required autocomplete="name"></div>
@@ -715,7 +715,7 @@ def lacav(P):
     <p class="eyebrow rv">Coming soon to Latine</p>
     <h1 class="rv d1">LACAV</h1>
     <p class="rv d2">Something new is taking shape at Latine. Join the list to be the first to hear when the doors open.</p>
-    <form class="news rv d3" action="/send.php" method="post"><input type="hidden" name="form" value="LACAV waiting list"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
+    <form class="news rv d3" action="https://script.google.com/macros/s/AKfycbxJuxezp2XgzqYO22tVfzeNw8EKvIfsY_Isp0xqpPSo44ozssgDz1rbXOA4F3IJ-64tFQ/exec" method="post"><input type="hidden" name="form" value="LACAV waiting list"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
   </div>
 </section>
 '''
@@ -769,7 +769,7 @@ if __name__ == '__main__':
     open(os.path.join(OUT, 'css/site.css'), 'w').write(open(os.path.join(HERE, 'base.css')).read() + open(os.path.join(HERE, 'pages.css')).read())
     shutil.copy(os.path.join(HERE, 'site.js'), os.path.join(OUT, 'js/site.js'))
     shutil.copytree(os.path.join(HERE, 'video'), os.path.join(OUT, 'video'))
-    for f in ('send.php', '.htaccess'): shutil.copy(os.path.join(HERE, 'server', f), os.path.join(OUT, f))
+    # site is on GitHub Pages: forms post to the Google Apps Script (server/google-apps-script.gs); send.php/.htaccess kept in _src/server for Apache hosting
     if LOCAL:
         if not os.path.isdir(os.path.join(HERE, 'images')): sys.exit('Run ./fetch_images.sh first')
         os.makedirs(os.path.join(OUT, 'images'))
