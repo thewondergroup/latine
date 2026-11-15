@@ -21,3 +21,10 @@ Static site for GitHub Pages, served from the repo root on `main`.
 
 ## Hosting: Krystal (cPanel)
 Upload the contents of the repo root (everything except `.git`, `_src`, `README.md`, `images.txt`, `.gitignore`) into `public_html`. `.htaccess` handles HTTPS, no-www, clean URLs (no .html), old WordPress redirects, 404 page and caching. Keep `public_html/wp-content/uploads/` on the server: the set-lunch and dessert PDFs still link there.
+
+## SEO and AI search
+- Every page: unique title + description, canonical, Open Graph/Twitter tags, Restaurant JSON-LD (`restaurant_ld()` in build.py), breadcrumbs.
+- FAQPage JSON-LD is generated automatically wherever `faq()` is used (home, The Restaurant, Private Dining, Christmas). Menu JSON-LD on the Menus page is generated from `_src/menus/*.json`.
+- `llms.txt` (facts for AI assistants), `robots.txt` (allows search + AI crawlers) and `sitemap.xml` are regenerated on every build from the same data, so prices stay in sync.
+- Photos: build makes WebP versions (1600px + 800px) with srcset; JPGs are kept for social-share previews. Alt text lives in the `ALT` table in build.py.
+- Favicons are in `_src/static/`.

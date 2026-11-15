@@ -3,7 +3,7 @@
    python3 build.py           -> images load from latinemayfair.com (current)
    python3 build.py --local   -> images load from /images (after running fetch_images.sh)
 """
-import os, sys, re, html, shutil
+import os, sys, re, html, shutil, json, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.normpath(os.path.join(HERE, '..'))  # repo root = GitHub Pages root
@@ -49,30 +49,89 @@ def VID(name, P='', eager=False, cls=''):
 NAV_L = [('the-restaurant', 'The Restaurant'), ('our-menu', 'Menus'), ('private-dining-room', 'Private Dining'), ('christmas', 'Christmas')]
 NAV_R = [('portfolio-gallery', 'Gallery'), ('about-us', 'About')]
 
-def head(P, title, desc, path, og):
-    return f'''<!DOCTYPE html>
+ALT = {
+ 'dining-room': 'The dining room and marble crudo bar at Latine Mayfair',
+ 'dining-room-render': 'The dining room at Latine Mayfair, with chandelier and marble tables',
+ 'crudo-bar': 'The marble crudo bar at Latine Mayfair',
+ 'la-candela': 'La Candela, the first-floor lounge and bar at Latine Mayfair',
+ 'la-candela-stripes': 'The striped banquette room at La Candela, Latine Mayfair',
+ 'el-cielo-table': 'El Cielo, the private dining room at Latine Mayfair, with a long table set for dinner',
+ 'el-cielo-chandelier': 'Candle chandelier and hand-painted woodland walls in El Cielo, Latine Mayfair\'s private dining room',
+ 'terrace': 'The terrace at Latine in Lancashire Court, Mayfair',
+ 'terrace-guests': 'Guests at lunch on the terrace at Latine, Lancashire Court, Mayfair',
+ 'beef': 'Sliced beef fillet with red wine jus at Latine Mayfair',
+ 'beef-wide': 'Sliced beef fillet with red wine jus at Latine Mayfair',
+ 'prawns': 'Red prawn ceviche with plantain chips at Latine Mayfair',
+ 'oysters': 'Oysters from the crudo bar at Latine Mayfair',
+ 'squid-ink': 'Squid with squid ink at Latine Mayfair',
+ 'signature-main': 'A main course at Latine Mayfair',
+ 'dessert-tatin': 'Tarte tatin au plantain served on a Latine plate',
+ 'dessert-caramel': 'Caramel dessert with vanilla cream at Latine Mayfair',
+ 'wine': 'A glass of red wine at Latine Mayfair',
+ 'cocktail': 'An old fashioned cocktail at La Candela, Latine Mayfair',
+}
+WEBP = {}   # photo name -> full width, filled at build time
+EXTRA_LD = []   # JSON-LD blocks collected while a page body is built (FAQ, menu)
+
+def ld(obj):
+    return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False, separators=(',', ':')) + '</script>\n'
+
+def plain(t):
+    return html.unescape(re.sub(r'<[^>]+>', '', t)).replace('\xa0', ' ').strip()
+
+def restaurant_ld():
+    return {
+     '@context': 'https://schema.org', '@type': 'Restaurant', '@id': SITE + '#restaurant',
+     'name': 'Latine Mayfair', 'alternateName': 'Latine',
+     'description': 'French–Latin American restaurant in Lancashire Court, Mayfair, London, with a terrace, crudo bar, the La Candela lounge and El Cielo private dining room.',
+     'url': SITE, 'telephone': '+442038873126', 'email': 'contact@latinemayfair.com',
+     'image': [SITE + 'images/dining-room.jpg', SITE + 'images/el-cielo-table.jpg', SITE + 'images/terrace-guests.jpg', SITE + 'images/prawns.jpg'],
+     'servesCuisine': ['French', 'Latin American', 'Seafood'], 'priceRange': '£££',
+     'address': {'@type': 'PostalAddress', 'streetAddress': '10-11 Lancashire Court', 'addressLocality': 'London', 'addressRegion': 'Greater London', 'postalCode': 'W1S 1EY', 'addressCountry': 'GB'},
+     'hasMap': 'https://maps.app.goo.gl/iFrZtrJGWiLJnQhD7',
+     'openingHoursSpecification': [{'@type': 'OpeningHoursSpecification', 'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], 'opens': '12:00', 'closes': '23:59'}],
+     'hasMenu': SITE + 'our-menu/', 'acceptsReservations': 'True',
+     'potentialAction': {'@type': 'ReserveAction', 'target': {'@type': 'EntryPoint', 'urlTemplate': BOOK}},
+     'amenityFeature': [
+       {'@type': 'LocationFeatureSpecification', 'name': 'Private dining room (El Cielo): 20 seated, 40+ standing', 'value': True},
+       {'@type': 'LocationFeatureSpecification', 'name': 'Outdoor terrace', 'value': True},
+       {'@type': 'LocationFeatureSpecification', 'name': 'Cocktail lounge with DJs (La Candela)', 'value': True}],
+     'makesOffer': [{'@type': 'Offer', 'name': 'Champagne & oysters', 'description': 'A bottle of Champagne and a dozen oysters. Thursday and Friday 5pm–7pm, Saturday 2pm–5pm.', 'price': '60', 'priceCurrency': 'GBP'}],
+     'employee': [{'@type': 'Person', 'name': 'Francisco Lafee', 'jobTitle': 'Executive Chef'}, {'@type': 'Person', 'name': 'Cyril Blaret', 'jobTitle': 'General Manager'}],
+     'sameAs': ['https://www.instagram.com/latinemayfair', 'https://www.opentable.co.uk/r/latine-mayfair-reservations-london'],
+    }
+
+def head(P, title, desc, path, og, noindex=False):
+    ogb = PHOTOS.get(os.path.basename(og), os.path.basename(og))
+    oga = ALT.get(os.path.splitext(ogb)[0], 'Latine Mayfair')
+    return f"""<!DOCTYPE html>
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title}</title>
+<title>{html.escape(title, quote=False)}</title>
 <meta name="description" content="{html.escape(desc)}">
+<meta name="robots" content="{'noindex, follow' if noindex else 'index, follow, max-image-preview:large, max-snippet:-1'}">
 <link rel="canonical" href="{SITE}{path}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{'restaurant' if path == '' else 'website'}">
+<meta property="og:site_name" content="Latine Mayfair">
+<meta property="og:locale" content="en_GB">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
-<meta property="og:image" content="{SITE}images/{PHOTOS.get(os.path.basename(og), os.path.basename(og))}">
+<meta property="og:image" content="{SITE}images/{ogb}">
+<meta property="og:image:alt" content="{html.escape(oga)}">
 <meta property="og:url" content="{SITE}{path}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1D2A24">
+<link rel="icon" href="{P}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{P}favicon.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="{P}apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Libre+Franklin:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{P}css/site.css">
-'''
+{'<link rel="preload" as="image" href="video/ceviche.jpg" fetchpriority="high">' + chr(10) if path == '' else ''}"""
 
-SCHEMA = '''<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Restaurant","name":"Latine Mayfair","url":"https://latinemayfair.com/","telephone":"+44 20 3887 3126","email":"contact@latinemayfair.com","servesCuisine":["French","Latin American"],"priceRange":"£££","image":"https://latinemayfair.com/images/dining-room.jpg","address":{"@type":"PostalAddress","streetAddress":"10-11 Lancashire Court","addressLocality":"London","postalCode":"W1S 1EY","addressCountry":"GB"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"12:00","closes":"24:00"}],"acceptsReservations":"''' + BOOK + '''","menu":"https://latinemayfair.com/our-menu/","sameAs":["https://www.instagram.com/latinemayfair"]}
-</script>
-'''
 
 def nav(P, active):
     def li(items):
@@ -161,11 +220,38 @@ def footer(P):
 </html>
 '''
 
-def page(path, title, desc, body_fn, active='', plain=False, og='2026/03/LATINE_RESTAURANT1.jpg', schema=False):
+def post(out):
+    """webp + srcset for photos, and fill in empty alt text"""
+    def img_fix(m):
+        tag = m.group(0)
+        sm = re.search(r'src="((?:\.\./)*images/)([^"/]+)\.jpg"', tag)
+        if not sm or sm.group(2) not in WEBP: return tag
+        pre, name = sm.group(1), sm.group(2)
+        tag = tag.replace(sm.group(0), f'src="{pre}{name}.webp" srcset="{pre}{name}-800.webp 800w, {pre}{name}.webp {WEBP[name]}w" sizes="(max-width: 900px) 100vw, 60vw"')
+        if 'alt=""' in tag and 'data-i=' not in tag and name in ALT:
+            tag = tag.replace('alt=""', 'alt="' + html.escape(ALT[name]) + '"')
+        return tag
+    out = re.sub(r'<img\b[^>]*>', img_fix, out)
+    return re.sub(r'href="((?:\.\./)*images/[^"/]+)\.jpg"', r'href="\1.webp"', out)
+
+def page(path, title, desc, body_fn, active='', plain=False, og='2026/03/LATINE_RESTAURANT1.jpg', schema=False, crumb='', noindex=False):
     depth = 0 if path == '' else path.strip('/').count('/') + 1
     P = '../' * depth
-    out = head(P, title, desc, path, og) + (SCHEMA if schema else '') + '</head>\n'
-    out += f'<body{" class=\"plain\"" if plain else ""}>\n' + nav(P, active) + body_fn(P) + footer(P)
+    del EXTRA_LD[:]
+    body = body_fn(P)
+    out = head(P, title, desc, path, og, noindex)
+    if not noindex:
+        out += ld(restaurant_ld())
+        if path == '':
+            out += ld({'@context': 'https://schema.org', '@type': 'WebSite', '@id': SITE + '#website', 'name': 'Latine Mayfair', 'url': SITE, 'inLanguage': 'en-GB', 'about': {'@id': SITE + '#restaurant'}})
+        else:
+            out += ld({'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': [
+                {'@type': 'ListItem', 'position': 1, 'name': 'Latine Mayfair', 'item': SITE},
+                {'@type': 'ListItem', 'position': 2, 'name': crumb or title.split(' | ')[0], 'item': SITE + path}]})
+        out += ''.join(ld(x) for x in EXTRA_LD)
+    out += '</head>\n'
+    out += f'<body{" class=\"plain\"" if plain else ""}>\n' + nav(P, active) + body + footer(P)
+    out = post(out)
     d = os.path.join(OUT, path)
     os.makedirs(d, exist_ok=True)
     open(os.path.join(d, 'index.html') if path else os.path.join(OUT, 'index.html'), 'w').write(out)
@@ -174,20 +260,19 @@ def redirect(path, to):
     d = os.path.join(OUT, path); os.makedirs(d, exist_ok=True)
     depth = path.strip('/').count('/') + 1
     rel = '../' * depth + to
-    open(os.path.join(d, 'index.html'), 'w').write(f'<!DOCTYPE html><html><head><meta charset="utf-8"><title>Latine Mayfair</title><link rel="canonical" href="{SITE}{to}"><meta http-equiv="refresh" content="0; url={rel}"></head><body><a href="{rel}">Continue</a></body></html>')
+    open(os.path.join(d, 'index.html'), 'w').write(f'<!DOCTYPE html><html><head><meta charset="utf-8"><title>Latine Mayfair</title><meta name="robots" content="noindex, follow"><link rel="canonical" href="{SITE}{to}"><meta http-equiv="refresh" content="0; url={rel}"></head><body><a href="{rel}">Continue</a></body></html>')
 
 # ---------------------------------------------------------------- components
 def phero(P, img, eyebrow, h1, sub='', ctas='', cls=''):
-    return f'''<header class="phero {cls}">
-  <img src="{IMG(img, P)}" alt="">
+    return f"""<header class="phero {cls}">
+  <img src="{IMG(img, P)}" alt="" fetchpriority="high">
   <div class="pin">
-    <p class="eyebrow rv">{eyebrow}</p>
-    <h1 class="rv d1">{h1}</h1>
+    <h1 class="rv d1"><span class="eyebrow h1-eyebrow">{eyebrow}</span>{h1}</h1>
     {f'<p class="sub rv d2">{sub}</p>' if sub else ''}
     {f'<div class="ctas rv d3">{ctas}</div>' if ctas else ''}
   </div>
 </header>
-'''
+"""
 
 def btn_book(cls='btn-solid', label='Book a table'):
     return f'<a class="btn {cls}" href="{BOOK}" target="_blank" rel="noopener">{label}</a>'
@@ -240,6 +325,8 @@ def enquiry(P, occasion='Christmas party', eyebrow='Events &amp; Christmas enqui
 '''
 
 def faq(items):
+    EXTRA_LD.append({'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [
+        {'@type': 'Question', 'name': plain(q), 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}} for q, a in items]})
     return '<div class="faq">' + ''.join(f'<details class="rv"><summary>{q}</summary><p>{a}</p></details>' for q, a in items) + '</div>'
 
 def visit_band(P, img='2026/09/Terrace3-1300x650.jpg'):
@@ -319,10 +406,28 @@ def offer(P, compact=False):
             '</div></section>')
 
 # ---------------------------------------------------------------- HOME
+def home_faq(P):
+    lunch = MJ('lunch'); xm = MJ('christmas')
+    L = 'style="border-bottom:1px solid"'
+    items = [
+     ('Where is Latine Mayfair?', 'Latine is at 10–11 Lancashire Court, London W1S 1EY, in the cobbled mews between Brook Street and New Bond Street in Mayfair. Bond Street station is a short walk away.'),
+     ('What kind of food does Latine serve?', f'French technique with the flavours of Latin America: ceviche, tiradito and oysters from the crudo bar, sharing starters, and fish and meat from the grill, alongside Latin-spirit cocktails and a French and South American wine list. <a href="{P}our-menu/" {L}>See the menus</a>.'),
+     ('What are the opening hours?', 'Monday to Saturday, 12pm until midnight, for lunch, dinner and late drinks. Latine is closed on Sundays.'),
+     ('How do I book a table?', f'Book online through <a href="{BOOK}" target="_blank" rel="noopener" {L}>OpenTable</a> or call 020 3887 3126. For tables of nine or more, <a href="{P}private-dining-room/#enquire" {L}>send an enquiry</a>.'),
+     ('Does Latine have a private dining room?', f'Yes. El Cielo, on the second floor, seats up to 20 guests or holds more than 40 for a standing reception, with menus tailored to the occasion. <a href="{P}private-dining-room/" {L}>Private dining at Latine</a>.'),
+     ('Can I book a Christmas party at Latine?', f'Yes. The Christmas menu, {xm["title"]}, is £{xm["price"]} per person, and El Cielo is available for private Christmas parties, with the La Candela lounge downstairs for afterwards. <a href="{P}christmas/" {L}>Christmas at Latine</a>.'),
+     ('Is there a set lunch menu?', f'Yes. The set lunch is served {lunch["note"].replace("Monday – Friday", "Monday to Friday").replace("12 – 3pm", "12pm to 3pm")}: {lunch["price"].replace(" · ", " or ")}.'),
+     ('What is the Champagne and oysters offer?', 'A bottle of Champagne and a dozen oysters for £60, available Thursday and Friday from 5pm to 7pm and Saturday from 2pm to 5pm.'),
+     ('Is there a dress code?', 'There is no strict dress code; most guests choose smart casual. We ask guests to avoid sportswear, beachwear and flip-flops.'),
+     ('Does Latine have outdoor seating and a bar?', 'Yes. There is a terrace in Lancashire Court, a marble crudo bar on the ground floor, and La Candela, the first-floor lounge, with cocktails and DJs later in the evening.'),
+    ]
+    return ('<section class="sec tint" id="faq"><div class="sec-head"><p class="eyebrow rv">Good to know</p>'
+            '<h2 class="rv d1">Questions, <em>answered</em></h2></div>' + faq(items) + '</section>\n')
+
 def home(P):
     b = open(os.path.join(HERE, 'home_body.html')).read()
     b = re.sub(r'https://latinemayfair\.com/wp-content/uploads/([^"\)]+\.(?:jpe?g|png|webp))', lambda m: IMG(m.group(1), P), b)
-    b = b.replace('{{OFFER}}', offer(P))
+    b = b.replace('{{OFFER}}', offer(P)).replace('{{FAQ}}', home_faq(P))
     b = re.sub(r'\{\{VID:([a-z-]+)(:eager)?\}\}', lambda m: VID(m.group(1), P, bool(m.group(2))), b)
     b = b.replace('<section class="xmas on-dark" id="christmas">', '<section class="xmas on-dark sparkles" id="christmas">')
     # link out to the new inner pages
@@ -340,7 +445,7 @@ def home(P):
 
 # ---------------------------------------------------------------- THE RESTAURANT
 def restaurant(P):
-    return phero(P, '2026/09/Restaurant-1-scaled.jpg', 'The Restaurant · Mayfair', 'A house of<br><em>many moods</em>',
+    return phero(P, '2026/09/Restaurant-1-scaled.jpg', 'The Restaurant · Latine Mayfair', 'A house of<br><em>many moods</em>',
         'Set across several levels in Lancashire Court, Latine unfolds through a series of distinct spaces, each with its own rhythm, from lunch on the terrace to late nights upstairs.',
         btn_book() + f'<a class="btn btn-line" href="{P}our-menu/">See the menus</a>') + f'''
 <section class="sec">
@@ -500,9 +605,31 @@ ALLERGEN = ('(V) Vegetarian · (VG) Vegan. Please always inform your server of a
             'Not all ingredients are listed and we cannot guarantee the total absence of allergens; information on the fourteen legal allergens is available on request. '
             'All prices include VAT. A discretionary 13.5% service charge will be added to your bill.')
 
+def menu_ld():
+    def item(i, priced=True):
+        o = {'@type': 'MenuItem', 'name': i['name'].capitalize() if i['name'].isupper() else i['name']}
+        if i.get('desc'): o['description'] = i['desc']
+        if priced and i.get('price'): o['offers'] = {'@type': 'Offer', 'price': i['price'], 'priceCurrency': 'GBP'}
+        if 'vg' in (i.get('tags') or []): o['suitableForDiet'] = 'https://schema.org/VeganDiet'
+        elif 'v' in (i.get('tags') or []): o['suitableForDiet'] = 'https://schema.org/VegetarianDiet'
+        return o
+    def sec(title, items, priced=True): return {'@type': 'MenuSection', 'name': title, 'hasMenuItem': [item(i, priced) for i in items]}
+    lunch = MJ('lunch'); xm = MJ('christmas'); des = MJ('desserts'); dr = MJ('drinks')
+    cocktails = [x for x in dr if x['title'] in ('Signature cocktails', 'Apéritifs', 'Non-alcoholic')]
+    return {'@context': 'https://schema.org', '@type': 'Menu', '@id': SITE + 'our-menu/#menu', 'name': 'Latine Mayfair menus', 'url': SITE + 'our-menu/', 'inLanguage': 'en-GB',
+            'mainEntityOfPage': SITE + 'our-menu/', 'hasMenuSection': [
+        {'@type': 'MenuSection', 'name': 'À la carte', 'hasMenuSection': [sec(x['title'], x['items']) for x in MJ('food')]},
+        {'@type': 'MenuSection', 'name': 'Set lunch', 'description': lunch['note'] + '. ' + lunch['price'], 'hasMenuSection': [sec(x['title'], x['items'], False) for x in lunch['sections']]},
+        {'@type': 'MenuSection', 'name': 'Desserts', 'hasMenuSection': [sec(x['title'], x['items']) for x in des['sections'] if 'items' in x]},
+        {'@type': 'MenuSection', 'name': 'Cocktails', 'hasMenuSection': [sec(x['title'], x['items']) for x in cocktails]},
+        {'@type': 'MenuSection', 'name': 'Christmas menu: ' + xm['title'], 'description': '£' + xm['price'] + ' per person',
+         'offers': {'@type': 'Offer', 'price': xm['price'], 'priceCurrency': 'GBP'}, 'hasMenuSection': [sec(x['title'], x['items'], False) for x in xm['sections']]},
+    ]}
+
 def menus(P):
+    EXTRA_LD.append(menu_ld())
     tabs = [('carte', 'À la carte'), ('lunch', 'Set lunch'), ('desserts', 'Desserts'), ('cocktails', 'Cocktails'), ('wine', 'Wine'), ('bar', 'Spirits &amp; more'), ('christmas-menu', 'Christmas')]
-    return phero(P, 'photos/beef-wide.jpg', 'Menus', 'Precision,<br>with <em>passion</em>',
+    return phero(P, 'photos/beef-wide.jpg', 'Menus · Latine Mayfair', 'Precision,<br>with <em>passion</em>',
         'Rooted in French technique, inspired by Latin America. Crudo and seafood, plates from the grill, a cocktail list built around Latin spirits and a cellar of great houses and new discoveries.',
         btn_book() + '<a class="btn btn-line" href="#carte">Explore the menus</a>') + f"""
 <nav class="mtabs" id="mtabs" aria-label="Menus">
@@ -560,7 +687,7 @@ def menus(P):
 
 # ---------------------------------------------------------------- PRIVATE DINING
 def private(P):
-    return phero(P, '2026/09/PDR6-scaled.jpg', 'Private dining &amp; events', 'El Cielo,<br><em>above it all</em>',
+    return phero(P, '2026/09/PDR6-scaled.jpg', 'Private dining room · Mayfair', 'El Cielo,<br><em>above it all</em>',
         'Latine\'s private room on the second floor: secluded, refined and made for dinners that matter.',
         '<a class="btn btn-solid" href="#enquire">Make an enquiry</a><a class="btn btn-line" href="' + P + 'christmas/">Christmas parties</a>') + f'''
 <section class="sec">
@@ -601,7 +728,7 @@ def private(P):
 
 # ---------------------------------------------------------------- CHRISTMAS
 def christmas(P):
-    return phero(P, '2026/09/PDR1-scaled.jpg', 'Christmas &amp; New Year 2026', 'Christmas in Mayfair,<br><em>by candlelight</em>',
+    return phero(P, '2026/09/PDR1-scaled.jpg', 'Christmas parties &amp; festive dining 2026', 'Christmas in Mayfair,<br><em>by candlelight</em>',
         'Long festive lunches, candlelit parties in El Cielo and late nights at La Candela. December at Latine is made for celebrating.',
         '<a class="btn btn-gold" href="#enquire" data-occasion="Christmas party">Plan a Christmas party</a>' + btn_book('btn-line', 'Book a festive table'), cls='dark') + f'''
 <section class="sec dark sparkles" style="position:relative;overflow:hidden">
@@ -678,7 +805,7 @@ def gallery(P):
 
 # ---------------------------------------------------------------- ABOUT
 def about(P):
-    return phero(P, '2026/05/LATINE-restautant-1024x684.png', 'About us', 'The meeting of<br><em>two worlds</em>',
+    return phero(P, '2026/05/LATINE-restautant-1024x684.png', 'About Latine Mayfair', 'The meeting of<br><em>two worlds</em>',
         'Latine brings together the elegance of French culinary tradition and the vibrant soul of Latin America in the heart of Mayfair.') + f'''
 <section class="sec">
 ''' + split(P, '2026/05/House-Story-e1779786021844-1024x684.png', 'The concept', 'French mastery,<br><em>Latin spirit</em>', [
@@ -717,7 +844,7 @@ def careers(P):
              ('Bar &amp; La Candela', 'Bartenders', 'Craft refined classics and signature cocktails inspired by Latin America, from the restaurant bar to the lounge as the night comes alive.'),
              ('Front of house', 'Floor team', 'Create memorable experiences for guests, from the first welcome to the last glass, in the heart of Mayfair.')]
     cards = ''.join(f'<div class="role-c rv{" d"+str(i) if i else ""}"><p class="eyebrow">{a}</p><h3>{b}</h3><p>{c}</p><a class="link" href="mailto:backoffice@latinemayfair.com?subject=Application%20-%20{re.sub("<[^>]+>|&amp;", "", a).replace(" ", "%20")}">Apply: backoffice@latinemayfair.com</a></div>' for i, (a, b, c) in enumerate(roles))
-    return phero(P, '2026/05/LATINE-carr-1024x684.png', 'Careers', 'Great restaurants,<br><em>great teams</em>',
+    return phero(P, '2026/05/LATINE-carr-1024x684.png', 'Careers · Latine Mayfair', 'Great restaurants,<br><em>great teams</em>',
         'We\'re a group of passionate people who genuinely care about what we do, and we\'re always looking for people who share our love of hospitality.', cls='short') + f'''
 <section class="sec">
   <div class="sec-head"><p class="eyebrow rv">Working at Latine</p><h2 class="rv d1">Grow with <em>us</em></h2><p class="rv d2">Working with us means being part of a supportive, professional environment where everyone is encouraged to grow. We value dedication, curiosity and a positive attitude, and we want our team to feel proud of the place they're helping to build.</p></div>
@@ -785,10 +912,75 @@ def notfound(P):
 </section>
 '''
 
+# ---------------------------------------------------------------- llms.txt (plain facts for AI assistants)
+def llms_txt():
+    lunch = MJ('lunch'); xm = MJ('christmas'); food = MJ('food'); dr = MJ('drinks')
+    def nm(i):
+        n = re.sub(r'\s+(x\d+|\d+\s?k?g)$', '', i['name'], flags=re.I).strip().capitalize()
+        return n + (' (' + i['desc'][0].lower() + i['desc'][1:] + ', £' + i['price'] + ')' if i.get('desc') else ' (£' + i['price'] + ')')
+    def names(title, n=5): return '; '.join(nm(i) for x in food if x['title'] == title for i in x['items'][:n])
+    sig = ', '.join(i['name'] for x in dr if x['title'] == 'Signature cocktails' for i in x['items'][:6])
+    xmas = '; '.join(x['title'] + ': ' + ', '.join(i['name'].capitalize() for i in x['items']) for x in xm['sections'])
+    return f"""# Latine Mayfair
+
+> Latine is a French–Latin American restaurant at 10–11 Lancashire Court, Mayfair, London W1S 1EY, in the cobbled mews between Brook Street and New Bond Street. It has a terrace, a marble crudo bar, a dining room, the La Candela cocktail lounge and El Cielo, a private dining room. This file is the restaurant's own summary of key facts.
+
+## Key facts
+- Name: Latine Mayfair (also written Latine)
+- Cuisine: French technique with Latin American flavours; ceviche, tiradito, oysters and seafood, grilled fish and meat
+- Address: 10–11 Lancashire Court, Mayfair, London W1S 1EY, United Kingdom
+- Nearest station: Bond Street
+- Opening hours: Monday to Saturday, 12pm to midnight. Closed Sunday
+- Phone: +44 20 3887 3126
+- Email: contact@latinemayfair.com
+- Reservations: {BOOK.split('?')[0]} (OpenTable) or by phone
+- Website: {SITE}
+- Instagram: https://www.instagram.com/latinemayfair
+- Executive Chef: Francisco Lafee. General Manager: Cyril Blaret
+- Dress code: no strict dress code; smart casual is usual. No sportswear, beachwear or flip-flops
+- Cancellations: at least 24 hours' notice is requested
+
+## Spaces
+- Terrace: outdoor tables in Lancashire Court
+- The Restaurant and crudo bar (ground floor): lunch and dinner; oysters, ceviche and crudo prepared at a marble bar
+- La Candela (first floor): cocktail lounge that becomes livelier later in the evening, with DJs
+- El Cielo (second floor): private dining room for up to 20 guests seated or more than 40 standing, with tailored menus, available for lunch and dinner
+
+## Menus and prices
+- À la carte crudo: {names('Crudo')}
+- À la carte starters: {names('Starters')}
+- À la carte mains: {names('Mains')}
+- Set lunch: {lunch['note'].replace(' – ', ' to ')}; {lunch['price'].replace(' · ', ', ')}
+- Signature cocktails: {sig}
+- Wine: around 136 wines, mainly from France (Champagne, Burgundy, Bordeaux, Loire, Rhône), Italy and South America (chiefly Argentina), with fine wines by the glass
+- A discretionary 13.5% service charge is added to the bill
+- Full menus with prices: {SITE}our-menu/
+
+## Offers
+- Champagne and oysters: a bottle of Champagne and a dozen oysters for £60. Thursday and Friday 5pm to 7pm, Saturday 2pm to 5pm
+
+## Christmas 2026
+- Christmas menu "{xm['title']}": £{xm['price']} per person. {xmas}
+- Private Christmas parties in El Cielo (20 seated, 40+ standing); larger tables in the restaurant on request
+- Details and enquiries: {SITE}christmas/
+
+## Pages
+- [Home]({SITE}): overview, spaces, offers and frequently asked questions
+- [The Restaurant]({SITE}the-restaurant/): terrace, dining room, crudo bar and La Candela
+- [Menus]({SITE}our-menu/): à la carte, set lunch, desserts, cocktails, wine, spirits and the Christmas menu, with prices
+- [Private Dining]({SITE}private-dining-room/): El Cielo private dining room, capacities and enquiry form
+- [Christmas]({SITE}christmas/): festive menu, Christmas parties and enquiry form
+- [Gallery]({SITE}portfolio-gallery/): photographs of the restaurant and food
+- [About]({SITE}about-us/): the concept, the history of Lancashire Court and the team
+- [Press]({SITE}press/): reviews and coverage, including Wallpaper*, Forbes, The London Standard and Country & Town House
+- [Careers]({SITE}careers/): kitchen, bar and front-of-house roles
+- [Reservation policy]({SITE}reservation-policy/): cancellations and dress code
+"""
+
 # ---------------------------------------------------------------- BUILD
 if __name__ == '__main__':
     # clean only what this script generates (OUT is the repo root)
-    GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images', 'video', 'send.php', '.htaccess',
+    GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images', 'video', 'send.php', '.htaccess', 'llms.txt', 'favicon.svg', 'favicon.png', 'apple-touch-icon.png',
            'the-restaurant', 'our-menu', 'private-dining-room', 'christmas', 'portfolio-gallery', 'about-us', 'careers',
            'press', 'lacav', 'lucky-7', 'reservation-policy', 'legal', 'journal', 'team', 'main-home', '404tmp']
     for g in GEN:
@@ -805,33 +997,47 @@ if __name__ == '__main__':
         os.makedirs(os.path.join(OUT, 'images'))
         for f in os.listdir(os.path.join(HERE, 'images')):
             if f not in PHOTOS: shutil.copy(os.path.join(HERE, 'images', f), os.path.join(OUT, 'images', f))
-        for f in os.listdir(os.path.join(HERE, 'photos')):
-            shutil.copy(os.path.join(HERE, 'photos', f), os.path.join(OUT, 'images', f))
+        from PIL import Image
+        cache = os.path.join(HERE, 'webp'); os.makedirs(cache, exist_ok=True)
+        for f in sorted(os.listdir(os.path.join(HERE, 'photos'))):
+            src = os.path.join(HERE, 'photos', f); name = os.path.splitext(f)[0]
+            shutil.copy(src, os.path.join(OUT, 'images', f))            # jpg kept for social-share previews
+            full, small = os.path.join(cache, name + '.webp'), os.path.join(cache, name + '-800.webp')
+            if not (os.path.exists(full) and os.path.exists(small) and os.path.getmtime(full) >= os.path.getmtime(src)):
+                im = Image.open(src).convert('RGB'); a = im.copy(); a.thumbnail((1600, 2600)); a.save(full, 'WEBP', quality=80, method=6)
+                b2 = im.copy(); b2.thumbnail((800, 1600)); b2.save(small, 'WEBP', quality=78, method=6)
+            WEBP[name] = Image.open(full).size[0]
+            for x in (full, small): shutil.copy(x, os.path.join(OUT, 'images', os.path.basename(x)))
+    for f in os.listdir(os.path.join(HERE, 'static')): shutil.copy(os.path.join(HERE, 'static', f), os.path.join(OUT, f))
 
-    page('', 'Latine Mayfair | French–Latin Restaurant, Private Dining & Christmas in Mayfair',
-         'Latine is a French–Latin American restaurant in the cobbled mews of Lancashire Court, Mayfair, moments from Bond Street. Lunch, dinner, La Candela lounge, El Cielo private dining and Christmas parties.', home, 'home', schema=True)
-    page('the-restaurant/', 'The Restaurant | Latine Mayfair', 'Terrace, crudo bar, dining room and La Candela lounge: discover the spaces at Latine, a French–Latin restaurant in Lancashire Court, Mayfair.', restaurant, 'the-restaurant', og='2026/09/Restaurant-1-scaled.jpg')
-    page('our-menu/', 'Menus | Latine Mayfair', 'À la carte, set lunch, desserts and wine at Latine Mayfair: French technique meets the flavours of Latin America.', menus, 'our-menu', og='2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png')
-    page('private-dining-room/', 'Private Dining Room Mayfair | El Cielo at Latine', 'El Cielo, Latine\'s private dining room in Mayfair, seats up to 20 and holds 40+ for receptions. Tailored menus for celebrations, business dinners and Christmas parties.', private, 'private-dining-room', og='2026/09/PDR6-scaled.jpg')
-    page('christmas/', 'Christmas Parties & Festive Dining in Mayfair | Latine', 'Christmas at Latine Mayfair: festive lunches and dinners, private Christmas parties in El Cielo for up to 20 seated or 40+ standing, and late nights at La Candela.', christmas, 'christmas', og='2026/09/PDR1-scaled.jpg')
-    page('portfolio-gallery/', 'Gallery | Latine Mayfair', 'Inside Latine Mayfair: the dining room, crudo bar, La Candela, El Cielo private dining room, terrace and food.', gallery, 'portfolio-gallery', plain=True)
-    page('about-us/', 'About Us | Latine Mayfair', 'The story of Latine: French culinary tradition meets the vibrant soul of Latin America in a historic Mayfair mews.', about, 'about-us', og='2026/05/LATINE-restautant-1024x684.png')
-    page('careers/', 'Careers | Latine Mayfair', 'Join the kitchen, bar or front of house team at Latine, a French–Latin restaurant in Mayfair.', careers, og='2026/05/LATINE-carr-1024x684.png')
-    page('press/', 'Press | Latine Mayfair', 'Latine Mayfair in the press: Wallpaper*, Forbes, The London Standard, SheerLuxe, Quintessentially and more.', press, plain=True)
-    page('lacav/', 'LACAV | Coming Soon to Latine Mayfair', 'LACAV is coming soon to Latine Mayfair. Join the list to hear first.', lacav)
-    page('reservation-policy/', 'Reservation Policy | Latine Mayfair', 'Reservation, cancellation and dress code policy at Latine Mayfair.', policy, plain=True)
-    page('legal/', 'Privacy Policy | Latine Mayfair', 'Privacy policy for Latine Mayfair Limited.', legal, plain=True)
+    page('', 'Latine Mayfair | French–Latin Restaurant in Mayfair, London',
+         'Latine is a French–Latin American restaurant in Lancashire Court, Mayfair, moments from Bond Street. Crudo bar, cocktails, private dining and Christmas parties.', home, 'home', schema=True)
+    page('the-restaurant/', 'The Restaurant, Crudo Bar & La Candela | Latine Mayfair', 'Inside Latine Mayfair: a terrace in Lancashire Court, a marble crudo bar, the dining room and La Candela, the first-floor cocktail lounge with DJs.', restaurant, 'the-restaurant', og='2026/09/Restaurant-1-scaled.jpg', crumb='The Restaurant')
+    page('our-menu/', 'Menus & Prices: À la Carte, Lunch, Cocktails | Latine Mayfair', 'Latine Mayfair menus with prices: ceviche, tiradito and oysters, mains from the grill, set lunch from £29, cocktails, wine and the Christmas menu.', menus, 'our-menu', og='2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png', crumb='Menus')
+    page('private-dining-room/', 'Private Dining Room in Mayfair | El Cielo at Latine', 'El Cielo, Latine\'s private dining room in Mayfair near Bond Street: up to 20 seated or 40+ standing, with tailored menus for dinners and parties.', private, 'private-dining-room', og='2026/09/PDR6-scaled.jpg', crumb='Private Dining')
+    page('christmas/', 'Christmas Parties & Festive Menu in Mayfair | Latine', 'Christmas at Latine Mayfair: the Menu Gran Latine at £120 per person, and private Christmas parties in El Cielo for up to 20 seated or 40+ standing.', christmas, 'christmas', og='2026/09/PDR1-scaled.jpg', crumb='Christmas')
+    page('portfolio-gallery/', 'Gallery | Latine Mayfair Restaurant, London', 'Inside Latine Mayfair: the dining room, crudo bar, La Candela, El Cielo private dining room, terrace and food.', gallery, 'portfolio-gallery', plain=True, crumb='Gallery')
+    page('about-us/', 'About Latine | French–Latin Restaurant in Mayfair, London', 'The story of Latine Mayfair: French culinary tradition meets Latin American flavour in a historic mews off Bond Street. Meet the team.', about, 'about-us', og='2026/05/LATINE-restautant-1024x684.png', crumb='About')
+    page('careers/', 'Careers | Restaurant Jobs in Mayfair at Latine', 'Join the kitchen, bar or front of house team at Latine, a French–Latin restaurant in Mayfair.', careers, og='2026/05/LATINE-carr-1024x684.png', crumb='Careers')
+    page('press/', 'Press & Reviews | Latine Mayfair', 'Latine Mayfair in the press: Wallpaper*, Forbes, The London Standard, SheerLuxe, Quintessentially and more.', press, plain=True, crumb='Press')
+    page('lacav/', 'LACAV | Coming Soon to Latine Mayfair', 'LACAV is coming soon to Latine Mayfair. Join the list to hear first.', lacav, crumb='LACAV')
+    page('reservation-policy/', 'Reservation Policy | Latine Mayfair', 'Reservation, cancellation and dress code policy at Latine Mayfair.', policy, plain=True, crumb='Reservation Policy')
+    page('legal/', 'Privacy Policy | Latine Mayfair', 'Privacy policy for Latine Mayfair Limited.', legal, plain=True, crumb='Privacy Policy')
     # 404 (absolute paths, GitHub Pages serves it from any depth)
-    page('404tmp/', 'Page not found | Latine Mayfair', 'Page not found.', notfound)
-    t = open(os.path.join(OUT, '404tmp/index.html')).read().replace('href="../', 'href="/').replace('src="../', 'src="/')
+    page('404tmp/', 'Page not found | Latine Mayfair', 'Page not found.', notfound, noindex=True)
+    t = open(os.path.join(OUT, '404tmp/index.html')).read().replace('href="../', 'href="/').replace('src="../', 'src="/').replace('srcset="../', 'srcset="/').replace(', ../', ', /')
     open(os.path.join(OUT, '404.html'), 'w').write(t); shutil.rmtree(os.path.join(OUT, '404tmp'))
     # old URLs
     redirect('journal/', 'press/'); redirect('lucky-7/', ''); redirect('team/', 'about-us/'); redirect('main-home/', '')
     # At go-live: run with --domain to add the CNAME, then point latinemayfair.com DNS at GitHub Pages
     if '--domain' in sys.argv: open(os.path.join(OUT, 'CNAME'), 'w').write('latinemayfair.com\n')
     urls = ['', 'the-restaurant/', 'our-menu/', 'private-dining-room/', 'christmas/', 'portfolio-gallery/', 'about-us/', 'careers/', 'press/', 'lacav/', 'reservation-policy/', 'legal/']
-    open(os.path.join(OUT, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}{u}</loc></url>\n' for u in urls) + '</urlset>\n')
-    open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n')
+    today = datetime.date.today().isoformat()
+    prio = {'': '1.0', 'our-menu/': '0.9', 'private-dining-room/': '0.9', 'christmas/': '0.9', 'the-restaurant/': '0.8'}
+    open(os.path.join(OUT, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}{u}</loc><lastmod>{today}</lastmod><priority>{prio.get(u, "0.5")}</priority></url>\n' for u in urls) + '</urlset>\n')
+    bots = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Bingbot', 'Amazonbot', 'meta-externalagent', 'CCBot']
+    open(os.path.join(OUT, 'robots.txt'), 'w').write('# Latine Mayfair: search engines and AI assistants are welcome\nUser-agent: *\nAllow: /\n\n' + ''.join(f'User-agent: {b}\nAllow: /\n\n' for b in bots) + f'Sitemap: {SITE}sitemap.xml\n')
+    open(os.path.join(OUT, 'llms.txt'), 'w').write(llms_txt())
     # image list for fetch_images.sh
     open(os.path.join(OUT, 'images.txt'), 'w').write('\n'.join(REMOTE + p for p in sorted(USED)) + '\n')
     print('built', len(urls), 'pages;', len(USED), 'images; local=' + str(LOCAL))
