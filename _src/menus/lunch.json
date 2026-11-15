@@ -1,0 +1,59 @@
+{
+ "note": "Monday – Friday, 12 – 3pm",
+ "price": "2 courses £29 · 3 courses £38",
+ "sections": [
+  {
+   "title": "Starter",
+   "items": [
+    {
+     "name": "Croquettes de canard x4",
+     "desc": "Duck croquettes, guava chipotle chutney"
+    },
+    {
+     "name": "Salade de burrata",
+     "desc": "Creamy burrata, mango vinaigrette, smoked almonds",
+     "tags": [
+      "v"
+     ]
+    },
+    {
+     "name": "Ceviche de loup de mer",
+     "desc": "Sea bass ceviche, passion fruit leche de tigre, popcorn"
+    }
+   ]
+  },
+  {
+   "title": "Main course",
+   "items": [
+    {
+     "name": "Chou hispi grillé à la braise",
+     "desc": "Grilled hispi cabbage, Peruvian curry sauce, Comté cheese",
+     "tags": [
+      "v"
+     ]
+    },
+    {
+     "name": "Suprême de poulet",
+     "desc": "Roast chicken, wild mushroom, sauce verte"
+    },
+    {
+     "name": "Poulpe grillé",
+     "desc": "Grilled octopus, Puy lentils, olive sauce"
+    }
+   ]
+  },
+  {
+   "title": "Dessert",
+   "items": [
+    {
+     "name": "Chocolate fondant",
+     "desc": "Red berries, chipotle chilli & milk ice cream"
+    },
+    {
+     "name": "Crème brûlée",
+     "desc": "Vanilla & mango"
+    }
+   ]
+  }
+ ]
+}

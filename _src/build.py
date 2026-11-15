@@ -70,7 +70,7 @@ def head(P, title, desc, path, og):
 '''
 
 SCHEMA = '''<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Restaurant","name":"Latine Mayfair","url":"https://latinemayfair.com/","telephone":"+44 20 3887 3126","email":"contact@latinemayfair.com","servesCuisine":["French","Latin American"],"priceRange":"£££","image":"https://latinemayfair.com/wp-content/uploads/2026/03/LATINE_RESTAURANT1.jpg","address":{"@type":"PostalAddress","streetAddress":"10-11 Lancashire Court","addressLocality":"London","postalCode":"W1S 1EY","addressCountry":"GB"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"12:00","closes":"24:00"}],"acceptsReservations":"''' + BOOK + '''","menu":"https://latinemayfair.com/our-menu/","sameAs":["https://www.instagram.com/latinemayfair"]}
+{"@context":"https://schema.org","@type":"Restaurant","name":"Latine Mayfair","url":"https://latinemayfair.com/","telephone":"+44 20 3887 3126","email":"contact@latinemayfair.com","servesCuisine":["French","Latin American"],"priceRange":"£££","image":"https://latinemayfair.com/images/dining-room.jpg","address":{"@type":"PostalAddress","streetAddress":"10-11 Lancashire Court","addressLocality":"London","postalCode":"W1S 1EY","addressCountry":"GB"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"12:00","closes":"24:00"}],"acceptsReservations":"''' + BOOK + '''","menu":"https://latinemayfair.com/our-menu/","sameAs":["https://www.instagram.com/latinemayfair"]}
 </script>
 '''
 
@@ -461,6 +461,26 @@ def wine_menu(P):
         out += f'<details class="wd rv"{" open" if i == 0 else ""}><summary><span>{esc(sec["title"])}</span><small>{n} wines</small></summary><div class="wd-b">{body(sec)}</div></details>'
     return out + '</div></section>'
 
+def lunch_menu(P):
+    m = MJ('lunch')
+    secs = ''.join('<section class="msec"><h3 class="mh rv">' + esc(x['title']) + '</h3>' + ORN + '<div class="dishes">' + ''.join(dish(i, False) for i in x['items']) + '</div></section>' for x in m['sections'])
+    return ('<div class="lunch-bar rv"><span>' + esc(m['note']) + '</span><b>' + esc(m['price']) + '</b></div>' + secs)
+
+def dessert_menu(P):
+    m = MJ('desserts'); o = ''
+    for x in m['sections']:
+        note = '<p class="mnote">' + esc(x['note']) + '</p>' if x.get('note') else ''
+        if 'list' in x:
+            lis = ''.join('<li><span>' + esc(a) + '</span><b>' + esc(b) + '</b></li>' for a, b in x['list'])
+            o += '<div class="sp rv"><h4>' + esc(x['title']) + '</h4><ul>' + lis + '</ul>' + note + '</div>'
+        elif x['title'].startswith('Glaces'):
+            o += '<section class="msec"><h3 class="mh rv">' + esc(x['title']) + '</h3>' + ORN + '<p class="scoops rv">' + ' · '.join(esc(i['name']) for i in x['items']) + '</p>' + note + '</section>'
+        else:
+            o += '<section class="msec' + (' two' if len(x['items']) > 3 else '') + '"><h3 class="mh rv">' + esc(x['title']) + '</h3>' + ORN + '<div class="dishes">' + ''.join(dish(i, bool(i.get('price'))) for i in x['items']) + '</div></section>'
+    # wrap the two list blocks side by side
+    o = o.replace('<div class="sp rv"><h4>Coffee', '<div class="hot"><div class="sp rv"><h4>Coffee', 1) + '</div>'
+    return o
+
 def christmas_menu(P, compact=False):
     xm = MJ('christmas')
     secs = ''.join(f'<div class="xm-sec"><h4 class="xm-h">{esc(s["title"])}</h4>' + ''.join(
@@ -480,7 +500,7 @@ ALLERGEN = ('(V) Vegetarian · (VG) Vegan. Please always inform your server of a
             'All prices include VAT. A discretionary 13.5% service charge will be added to your bill.')
 
 def menus(P):
-    tabs = [('carte', 'À la carte'), ('cocktails', 'Cocktails'), ('wine', 'Wine'), ('bar', 'Spirits &amp; more'), ('christmas-menu', 'Christmas')]
+    tabs = [('carte', 'À la carte'), ('lunch', 'Set lunch'), ('desserts', 'Desserts'), ('cocktails', 'Cocktails'), ('wine', 'Wine'), ('bar', 'Spirits &amp; more'), ('christmas-menu', 'Christmas')]
     return phero(P, 'photos/beef-wide.jpg', 'Menus', 'Precision,<br>with <em>passion</em>',
         'Rooted in French technique, inspired by Latin America. Crudo and seafood, plates from the grill, a cocktail list built around Latin spirits and a cellar of great houses and new discoveries.',
         btn_book() + '<a class="btn btn-line" href="#carte">Explore the menus</a>') + f"""
@@ -493,11 +513,20 @@ def menus(P):
   <p class="rv d2">Crudo from the bar, plates for sharing and mains from the grill. Dishes change with the seasons.</p></div>
   {offer(P, True)}
   <div class="mcard-p">{food_menu(P)}</div>
-  <div class="mside rv">
-    <a href="{REMOTE}2026/09/Lunch-Menu_LATINE09.pdf" target="_blank" rel="noopener"><span>Set lunch</span><small>Two or three courses · PDF</small></a>
-    <a href="{REMOTE}2026/09/Dessert-menu-Final-16-06-26-1.pdf-4.pdf" target="_blank" rel="noopener"><span>Desserts</span><small>French pastry, Latin accent · PDF</small></a>
-  </div>
+
   <p class="allergen">{ALLERGEN}</p>
+</section>
+
+<section class="mpage tint2" id="lunch">
+  <div class="mhead"><p class="eyebrow rv">Weekday lunch</p><h2 class="rv d1">Set <em>lunch</em></h2>
+  <p class="rv d2">A lighter, quicker lunch in Mayfair: two or three courses from a short seasonal menu.</p></div>
+  <div class="mcard-p">{lunch_menu(P)}</div>
+</section>
+
+<section class="mpage" id="desserts">
+  <div class="mhead"><p class="eyebrow rv">To finish</p><h2 class="rv d1">Desserts</h2>
+  <p class="rv d2">French pastry with a Latin accent, house ice creams, and coffee, digestifs and teas.</p></div>
+  <div class="mcard-p">{dessert_menu(P)}</div>
 </section>
 
 <section class="mpage dark" id="cocktails">
