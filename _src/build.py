@@ -65,7 +65,7 @@ def head(P, title, desc, path, og):
 <meta property="og:url" content="{SITE}{path}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Libre+Franklin:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Libre+Franklin:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{P}css/site.css">
 '''
 
@@ -148,6 +148,7 @@ def footer(P):
   </div>
   <div class="f-bot">
     <span>© 2026 Latine Mayfair Limited</span>
+    <span class="credit">Created by <a href="https://thewonderagency.co/" target="_blank" rel="noopener">The Wonder Agency</a></span>
     <span><a href="{P}reservation-policy/">Reservation policy</a><a href="{P}legal/">Privacy</a></span>
   </div>
 </footer>
