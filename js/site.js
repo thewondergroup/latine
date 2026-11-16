@@ -71,11 +71,15 @@
   }
   var f=$('#enqForm');
   if(f)f.addEventListener('submit',function(e){e.preventDefault();
-    send(f,function(){f.style.display='none';$('#thanks').style.display='block'},
+    send(f,function(){f.style.display='none';$('#thanks').style.display='block';
+        // analytics: no personal data, only non-identifying enquiry details
+        window.dataLayer=window.dataLayer||[];var g=function(n){var el=f.elements[n];return el?el.value:''};
+        window.dataLayer.push({event:'enquiry_submit',form_page:location.pathname,enquiry_occasion:g('occasion'),enquiry_space:g('space'),enquiry_guests:g('guests')})},
       function(){var m=$('#enqErr')||document.createElement('p');m.id='enqErr';m.style.cssText='grid-column:1/-1;color:#A9573A;font-size:14px';
         m.innerHTML='Sorry, that didn\'t send. Please email <a href="mailto:contact@latinemayfair.com" style="border-bottom:1px solid">contact@latinemayfair.com</a> or call 020 3887 3126.';f.appendChild(m)})});
   $$('.news').forEach(function(n){n.addEventListener('submit',function(e){e.preventDefault();
-    send(n,function(){n.innerHTML='<span style="padding:12px 0;color:#D9C49A;font-size:14px">Thank you, you\'re on the list.</span>'},
+    send(n,function(){n.innerHTML='<span style="padding:12px 0;color:#D9C49A;font-size:14px">Thank you, you\'re on the list.</span>';
+        window.dataLayer=window.dataLayer||[];window.dataLayer.push({event:'newsletter_signup',form_page:location.pathname})},
       function(){n.insertAdjacentHTML('afterend','<p style="font-size:13px;color:#D9C49A;margin-top:8px">Sorry, please try again later.</p>')})})});
 
   // sparkles

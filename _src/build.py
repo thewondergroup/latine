@@ -11,6 +11,11 @@ LOCAL = '--local' in sys.argv
 REMOTE = 'https://latinemayfair.com/wp-content/uploads/'
 BOOK = 'https://www.opentable.co.uk/r/latine-mayfair-reservations-london?restref=474459&lang=en-GB&ot_source=Restaurant%20website'
 SITE = 'https://latinemayfair.com/'
+GTM_ID = 'GTM-NKBCGM2N'   # Google Tag Manager container (account "Latine Mayfair Account"); carries GA4 G-FH9929DM7Q
+GTM_HEAD = ("<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});"
+            "var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;"
+            "j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','" + GTM_ID + "');</script>\n")
+GTM_BODY = ('<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=' + GTM_ID + '" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>\n')
 USED = set()
 
 # Real photography (in _src/photos) mapped onto each image slot. Slots not listed keep their placeholder.
@@ -109,7 +114,7 @@ def head(P, title, desc, path, og, noindex=False):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{html.escape(title, quote=False)}</title>
+{GTM_HEAD}<title>{html.escape(title, quote=False)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <meta name="robots" content="{'noindex, follow' if noindex else 'index, follow, max-image-preview:large, max-snippet:-1'}">
 <link rel="canonical" href="{SITE}{path}">
@@ -250,7 +255,7 @@ def page(path, title, desc, body_fn, active='', plain=False, og='2026/03/LATINE_
                 {'@type': 'ListItem', 'position': 2, 'name': crumb or title.split(' | ')[0], 'item': SITE + path}]})
         out += ''.join(ld(x) for x in EXTRA_LD)
     out += '</head>\n'
-    out += f'<body{" class=\"plain\"" if plain else ""}>\n' + nav(P, active) + body + footer(P)
+    out += f'<body{" class=\"plain\"" if plain else ""}>\n' + GTM_BODY + nav(P, active) + body + footer(P)
     out = post(out)
     d = os.path.join(OUT, path)
     os.makedirs(d, exist_ok=True)

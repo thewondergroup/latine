@@ -15,8 +15,8 @@ Static site for GitHub Pages, served from the repo root on `main`.
 2. **Forms (done):** all forms post to a Google Apps Script web app (code in `_src/server/google-apps-script.gs`, attached to the "Latine Website Enquiries" Google Sheet). Events/Christmas enquiries → Enquiries tab + email to contact@latinemayfair.com; newsletter and LACAV → Sign-ups tab. Change recipients via `NOTIFY` in the script, then redeploy as a new version.
    _Old note:_ the events/Christmas enquiry form and newsletter forms are front-end only. Wire to Latine's events inbox + Google Sheet (search `TODO` in build.py / home_body.html).
 3. **Christmas:** add festive menus, prices and any Christmas Eve / NYE details once supplied (christmas() in build.py).
-4. **Tracking:** add GTM / Meta pixel to `head()` in build.py.
-5. **Domain:** `python3 build.py --local --domain` adds the CNAME; then point latinemayfair.com DNS to GitHub Pages.
+4. **Tracking (done 2026-11-16):** GTM-NKBCGM2N is in `head()` / `<body>` (see `GTM_ID` in build.py) and carries GA4 G-FH9929DM7Q. `site.js` pushes `enquiry_submit` and `newsletter_signup` to the dataLayer. Meta pixel not added yet. Search Console is verified by `_src/static/googlea5421e877b5b6937.html` (copied to the root, must stay).
+5. **Domain:** always build with `python3 build.py --local --domain`. Without `--domain` the build deletes `CNAME` and the live domain breaks. Needs Python 3.12+ (uses newer f-string syntax) and Pillow.
 6. Old URLs kept: /the-restaurant/, /private-dining-room/, /our-menu/, /portfolio-gallery/, /about-us/, /lacav/, /lucky-7/, /careers/, /reservation-policy/, /legal/. Redirects: /journal/ → /press/, /team/ → /about-us/, /main-home/ → /.
 
 ## Hosting: Krystal (cPanel)
