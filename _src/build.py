@@ -30,9 +30,9 @@ PHOTOS = {
  'PDR1-scaled.jpg': 'el-cielo-table.jpg', 'PDR4-scaled.jpg': 'el-cielo-table.jpg', 'PDR5-scaled.jpg': 'el-cielo-table.jpg',
  'PDR2-scaled.jpg': 'el-cielo-chandelier.jpg', 'PDR6-scaled.jpg': 'el-cielo-chandelier.jpg',
  'Terrace-scaled.jpg': 'terrace-guests.jpg', 'Terrace-2-scaled.jpg': 'terrace-guests.jpg', 'Terrace3-1300x650.jpg': 'terrace.jpg', 'stairs-latine.jpg': 'crudo-bar.jpg',
- 'ChatGPT-Image-Apr-15-2026-10_36_38-PM.png': 'prawns.jpg', 'ChatGPT-Image-Apr-15-2026-10_41_32-PM.png': 'oysters.jpg',
- 'ChatGPT-Image-Apr-16-2026-09_33_05-AM.png': 'squid-ink.jpg', 'ChatGPT-Image-Apr-16-2026-09_35_51-AM.png': 'beef.jpg',
- 'ChatGPT-Image-Apr-16-2026-09_44_31-AM.png': 'signature-main.jpg',
+ 'ChatGPT-Image-Apr-15-2026-10_36_38-PM.png': 'prawn-ceviche.jpg', 'ChatGPT-Image-Apr-15-2026-10_41_32-PM.png': 'oysters.jpg',
+ 'ChatGPT-Image-Apr-16-2026-09_33_05-AM.png': 'tuna-tiradito.jpg', 'ChatGPT-Image-Apr-16-2026-09_35_51-AM.png': 'beef-fillet.jpg',
+ 'ChatGPT-Image-Apr-16-2026-09_44_31-AM.png': 'ribeye.jpg',
  'DSC_6256-copy-2-scaled.jpg': 'dessert-tatin.jpg',
 }
 
@@ -64,12 +64,16 @@ ALT = {
  'el-cielo-chandelier': 'Candle chandelier and hand-painted woodland walls in El Cielo, Latine Mayfair\'s private dining room',
  'terrace': 'The terrace at Latine in Lancashire Court, Mayfair',
  'terrace-guests': 'Guests at lunch on the terrace at Latine, Lancashire Court, Mayfair',
- 'beef': 'Sliced beef fillet with red wine jus at Latine Mayfair',
- 'beef-wide': 'Sliced beef fillet with red wine jus at Latine Mayfair',
- 'prawns': 'Red prawn ceviche with plantain chips at Latine Mayfair',
+ 'beef-fillet': 'Chargrilled beef fillet with Périgord sauce at Latine Mayfair',
+ 'ribeye': 'Chargrilled ribeye on the bone with chimichurri Béarnaise at Latine Mayfair',
+ 'duck-magret': 'Duck magret with confit potimarron and guava sauce at Latine Mayfair',
+ 'duck-magret-wide': 'Duck magret with confit potimarron and guava sauce at Latine Mayfair',
+ 'prawn-ceviche': 'Red prawn ceviche with mango and yuzu leche de tigre and plantain chips at Latine Mayfair',
  'oysters': 'Oysters from the crudo bar at Latine Mayfair',
- 'squid-ink': 'Squid with squid ink at Latine Mayfair',
- 'signature-main': 'A main course at Latine Mayfair',
+ 'tuna-tiradito': 'Tuna tiradito with coconut cream at Latine Mayfair',
+ 'tuna-tiradito-table': 'Tuna tiradito with bread and butter on the table at Latine Mayfair',
+ 'steak-tartare': 'Steak tartare on crisp potato pavé at Latine Mayfair',
+ 'escargots': 'Escargots baked in chimichurri butter at Latine Mayfair',
  'dessert-tatin': 'Tarte tatin au plantain served on a Latine plate',
  'dessert-caramel': 'Caramel dessert with vanilla cream at Latine Mayfair',
  'wine': 'A glass of red wine at Latine Mayfair',
@@ -90,7 +94,7 @@ def restaurant_ld():
      'name': 'Latine Mayfair', 'alternateName': 'Latine',
      'description': 'French–Latin American restaurant in Lancashire Court, Mayfair, London, with a terrace, crudo bar, the La Candela lounge and El Cielo private dining room.',
      'url': SITE, 'telephone': '+442038873126', 'email': 'contact@latinemayfair.com',
-     'image': [SITE + 'images/dining-room.jpg', SITE + 'images/el-cielo-table.jpg', SITE + 'images/terrace-guests.jpg', SITE + 'images/prawns.jpg'],
+     'image': [SITE + 'images/dining-room.jpg', SITE + 'images/el-cielo-table.jpg', SITE + 'images/terrace-guests.jpg', SITE + 'images/prawn-ceviche.jpg', SITE + 'images/ribeye.jpg'],
      'servesCuisine': ['French', 'Latin American', 'Seafood'], 'priceRange': '£££',
      'address': {'@type': 'PostalAddress', 'streetAddress': '10-11 Lancashire Court', 'addressLocality': 'London', 'addressRegion': 'Greater London', 'postalCode': 'W1S 1EY', 'addressCountry': 'GB'},
      'hasMap': 'https://maps.app.goo.gl/iFrZtrJGWiLJnQhD7',
@@ -141,7 +145,7 @@ def head(P, title, desc, path, og, noindex=False):
 def nav(P, active):
     def li(items):
         return ''.join(f'<li><a href="{P}{s}/"{" class=\"active\"" if s == active else ""}>{t}</a></li>' for s, t in items)
-    MO = [('', 'Home', 'dining-room.jpg'), ('the-restaurant/', 'The Restaurant', 'dining-room-render.jpg'), ('our-menu/', 'Menus', 'signature-main.jpg'), ('private-dining-room/', 'Private Dining', 'el-cielo-table.jpg'), ('christmas/', 'Christmas', 'el-cielo-chandelier.jpg'), ('portfolio-gallery/', 'Gallery', 'terrace-guests.jpg'), ('about-us/', 'About', 'crudo-bar.jpg')]
+    MO = [('', 'Home', 'dining-room.jpg'), ('the-restaurant/', 'The Restaurant', 'dining-room-render.jpg'), ('our-menu/', 'Menus', 'ribeye.jpg'), ('private-dining-room/', 'Private Dining', 'el-cielo-table.jpg'), ('christmas/', 'Christmas', 'el-cielo-chandelier.jpg'), ('portfolio-gallery/', 'Gallery', 'terrace-guests.jpg'), ('about-us/', 'About', 'crudo-bar.jpg')]
     cur_i = next((i for i, (u, _, _) in enumerate(MO) if u.strip('/') == active or (u == '' and active == 'home')), 0)
     mo_imgs = ''.join(f'<img src="{P}images/{im}" alt="" data-i="{i}"{" class=\"on\"" if i == cur_i else ""} loading="lazy">' for i, (_, _, im) in enumerate(MO))
     mo_links = ''.join(f'<a href="{(P + u) or './'}" data-i="{i}" style="--i:{i}"{" class=\"cur\"" if (u.strip("/") == active or (u == "" and active == "home")) else ""}><span class="mo-n">{["i","ii","iii","iv","v","vi","vii"][i]}.</span><span class="mo-t">{t}</span></a>' for i, (u, t, _) in enumerate(MO))
@@ -225,6 +229,9 @@ def footer(P):
 </html>
 '''
 
+FOCUS = {'tuna-tiradito': '48% 62%', 'tuna-tiradito-table': '50% 72%', 'prawn-ceviche': '50% 66%', 'steak-tartare': '52% 55%', 'escargots': '46% 62%',
+         'ribeye': '55% 55%', 'duck-magret-wide': '45% 48%', 'duck-magret': '50% 52%', 'beef-fillet': '50% 60%'}
+
 def post(out):
     """webp + srcset for photos, and fill in empty alt text"""
     def img_fix(m):
@@ -235,6 +242,8 @@ def post(out):
         tag = tag.replace(sm.group(0), f'src="{pre}{name}.webp" srcset="{pre}{name}-800.webp 800w, {pre}{name}.webp {WEBP[name]}w" sizes="(max-width: 900px) 100vw, 60vw"')
         if 'alt=""' in tag and 'data-i=' not in tag and name in ALT:
             tag = tag.replace('alt=""', 'alt="' + html.escape(ALT[name]) + '"')
+        if name in FOCUS and 'style=' not in tag:
+            tag = tag.replace('<img ', f'<img style="object-position:{FOCUS[name]}" ', 1)
         return tag
     out = re.sub(r'<img\b[^>]*>', img_fix, out)
     return re.sub(r'href="((?:\.\./)*images/[^"/]+)\.jpg"', r'href="\1.webp"', out)
@@ -522,7 +531,7 @@ ORN = '<svg class="orn" viewBox="0 0 84 14" fill="none" stroke="currentColor" st
 def food_menu(P):
     food = MJ('food')
     out = []
-    breaks = {'Oysters': ('photos/prawns.jpg', 'photos/oysters.jpg'), 'Mains': ('photos/beef-wide.jpg', None)}
+    breaks = {'Oysters': ('photos/prawn-ceviche.jpg', 'photos/tuna-tiradito.jpg'), 'Mains': ('photos/duck-magret-wide.jpg', None)}
     for s in food:
         cls = 'msec two' if len(s['items']) > 3 else 'msec'
         notes = ''.join(f'<p class="mnote">{esc(n)}</p>' for n in s.get('notes', []))
@@ -634,7 +643,7 @@ def menu_ld():
 def menus(P):
     EXTRA_LD.append(menu_ld())
     tabs = [('carte', 'À la carte'), ('lunch', 'Set lunch'), ('desserts', 'Desserts'), ('cocktails', 'Cocktails'), ('wine', 'Wine'), ('bar', 'Spirits &amp; more'), ('christmas-menu', 'Christmas')]
-    return phero(P, 'photos/beef-wide.jpg', 'Menus · Latine Mayfair', 'Precision,<br>with <em>passion</em>',
+    return phero(P, 'photos/ribeye.jpg', 'Menus · Latine Mayfair', 'Precision,<br>with <em>passion</em>',
         'Rooted in French technique, inspired by Latin America. Crudo and seafood, plates from the grill, a cocktail list built around Latin spirits and a cellar of great houses and new discoveries.',
         btn_book() + '<a class="btn btn-line" href="#carte">Explore the menus</a>') + f"""
 <nav class="mtabs" id="mtabs" aria-label="Menus">
@@ -772,18 +781,22 @@ def christmas(P):
 # ---------------------------------------------------------------- GALLERY
 GALLERY = [
  ('2026/03/LATINE_RESTAURANT1.jpg','restaurant','The dining room'),
- ('2026/04/ChatGPT-Image-Apr-15-2026-10_41_32-PM.png','food','Oysters'),
+ ('photos/tuna-tiradito.jpg','food','Tuna tiradito, coconut cream'),
  ('2026/09/PDR1-scaled.jpg','cielo','El Cielo, set for dinner'),
  ('2026/09/Terrace-scaled.jpg','terrace','The terrace in Lancashire Court'),
- ('2026/04/ChatGPT-Image-Apr-15-2026-10_36_38-PM.png','food','Prawns, plantain'),
+ ('photos/prawn-ceviche.jpg','food','Red prawn ceviche, plantain chips'),
+ ('photos/ribeye.jpg','food','Ribeye, chimichurri Béarnaise'),
  ('2026/09/Restaurant-3-scaled.jpg','restaurant','The crudo bar'),
  ('2026/03/CANDELA_LATINE-e1779785134779.jpg','candela','La Candela'),
- ('2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png','food','Beef, red wine jus'),
+ ('photos/beef-fillet.jpg','food','Beef fillet, Périgord sauce'),
+ ('photos/steak-tartare.jpg','food','Steak tartare, potato pavé'),
  ('2026/09/PDR2-scaled.jpg','cielo','The chandelier in El Cielo'),
  ('2026/09/Restaurant-1-scaled.jpg','restaurant','The dining room'),
- ('2026/04/ChatGPT-Image-Apr-16-2026-09_33_05-AM.png','food','Squid, squid ink'),
+ ('photos/escargots.jpg','food','Escargots, chimichurri butter'),
+ ('photos/duck-magret-wide.jpg','food','Duck magret, guava sauce'),
  ('2026/04/latine-linee.jpg','candela','The striped room'),
- ('2026/04/ChatGPT-Image-Apr-16-2026-09_44_31-AM.png','food','Signature main'),
+ ('photos/tuna-tiradito-table.jpg','food','Tuna tiradito'),
+ ('photos/duck-magret.jpg','food','Duck magret, confit potimarron'),
  ('2026/09/DSC_6256-copy-2-scaled.jpg','food','Tarte tatin'),
  ('2026/04/bar-candela-latine.jpg','candela','A cocktail at La Candela'),
  ('photos/dessert-caramel.jpg','food','Dessert'),
@@ -1018,7 +1031,7 @@ if __name__ == '__main__':
     page('', 'Latine Mayfair | French–Latin Restaurant in Mayfair, London',
          'Latine is a French–Latin American restaurant in Lancashire Court, Mayfair, moments from Bond Street. Crudo bar, cocktails, private dining and Christmas parties.', home, 'home', schema=True)
     page('the-restaurant/', 'The Restaurant, Crudo Bar & La Candela | Latine Mayfair', 'Inside Latine Mayfair: a terrace in Lancashire Court, a marble crudo bar, the dining room and La Candela, the first-floor cocktail lounge with DJs.', restaurant, 'the-restaurant', og='2026/09/Restaurant-1-scaled.jpg', crumb='The Restaurant')
-    page('our-menu/', 'Menus & Prices: À la Carte, Lunch, Cocktails | Latine Mayfair', 'Latine Mayfair menus with prices: ceviche, tiradito and oysters, mains from the grill, set lunch from £29, cocktails, wine and the Christmas menu.', menus, 'our-menu', og='2026/04/ChatGPT-Image-Apr-16-2026-09_35_51-AM.png', crumb='Menus')
+    page('our-menu/', 'Menus & Prices: À la Carte, Lunch, Cocktails | Latine Mayfair', 'Latine Mayfair menus with prices: ceviche, tiradito and oysters, mains from the grill, set lunch from £29, cocktails, wine and the Christmas menu.', menus, 'our-menu', og='photos/duck-magret-wide.jpg', crumb='Menus')
     page('private-dining-room/', 'Private Dining Room in Mayfair | El Cielo at Latine', 'El Cielo, Latine\'s private dining room in Mayfair near Bond Street: up to 20 seated or 40+ standing, with tailored menus for dinners and parties.', private, 'private-dining-room', og='2026/09/PDR6-scaled.jpg', crumb='Private Dining')
     page('christmas/', 'Christmas Parties & Festive Menu in Mayfair | Latine', 'Christmas at Latine Mayfair: the Menu Gran Latine at £120 per person, and private Christmas parties in El Cielo for up to 20 seated or 40+ standing.', christmas, 'christmas', og='2026/09/PDR1-scaled.jpg', crumb='Christmas')
     page('portfolio-gallery/', 'Gallery | Latine Mayfair Restaurant, London', 'Inside Latine Mayfair: the dining room, crudo bar, La Candela, El Cielo private dining room, terrace and food.', gallery, 'portfolio-gallery', plain=True, crumb='Gallery')
