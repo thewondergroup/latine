@@ -135,7 +135,7 @@ def head(P, title, desc, path, og, noindex=False):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Libre+Franklin:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{P}css/site.css">
-{'<link rel="preload" as="image" href="video/ceviche.jpg" fetchpriority="high">' + chr(10) if path == '' else ''}"""
+{'<link rel="preload" as="image" href="video/latine-film.jpg" fetchpriority="high">' + chr(10) if path == '' else ''}"""
 
 
 def nav(P, active):
