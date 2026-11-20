@@ -45,6 +45,9 @@ def IMG(p, P=''):
         return P + 'images/' + PHOTOS.get(b, b)
     return REMOTE + p
 
+import hashlib
+ASSET_V = hashlib.md5(b''.join(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), f), 'rb').read() for f in ('base.css', 'pages.css', 'site.js'))).hexdigest()[:8]
+
 def VID(name, P='', eager=False, cls=''):
     # lazy, muted, looping, inline; site.js loads + plays when on screen, pauses when off
     return (f'<video class="vid {cls}" muted loop playsinline preload="none"{" data-eager" if eager else ""} '
@@ -138,7 +141,7 @@ def head(P, title, desc, path, og, noindex=False):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Julius+Sans+One&family=Libre+Franklin:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{P}css/site.css">
+<link rel="stylesheet" href="{P}css/site.css?v={ASSET_V}">
 {'<link rel="preload" as="image" href="video/latine-film.jpg" fetchpriority="high">' + chr(10) if path == '' else ''}"""
 
 
@@ -225,7 +228,7 @@ def footer(P):
   <a href="{P}christmas/">Christmas</a>
   <a href="{BOOK}" target="_blank" rel="noopener">Book a table</a>
 </div>
-<script src="{P}js/site.js"></script>
+<script src="{P}js/site.js?v={ASSET_V}"></script>
 </body>
 </html>
 '''
