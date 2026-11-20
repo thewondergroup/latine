@@ -145,11 +145,11 @@ def head(P, title, desc, path, og, noindex=False):
 def nav(P, active):
     def li(items):
         return ''.join(f'<li><a href="{P}{s}/"{" class=\"active\"" if s == active else ""}>{t}</a></li>' for s, t in items)
-    MO = [('', 'Home', 'dining-room.jpg'), ('the-restaurant/', 'The Restaurant', 'dining-room-render.jpg'), ('our-menu/', 'Menus', 'ribeye.jpg'), ('private-dining-room/', 'Private Dining', 'el-cielo-table.jpg'), ('christmas/', 'Christmas', 'el-cielo-chandelier.jpg'), ('portfolio-gallery/', 'Gallery', 'terrace-guests.jpg'), ('about-us/', 'About', 'crudo-bar.jpg')]
+    MO = [('', 'Home', 'dining-room.jpg'), ('the-restaurant/', 'The Restaurant', 'dining-room-render.jpg'), ('our-menu/', 'Menus', 'ribeye.jpg'), ('private-dining-room/', 'Private Dining', 'el-cielo-table.jpg'), ('christmas/', 'Christmas', 'el-cielo-chandelier.jpg'), ('new-year/', 'New Year', 'la-candela.jpg'), ('portfolio-gallery/', 'Gallery', 'terrace-guests.jpg'), ('about-us/', 'About', 'crudo-bar.jpg')]
     cur_i = next((i for i, (u, _, _) in enumerate(MO) if u.strip('/') == active or (u == '' and active == 'home')), 0)
     mo_imgs = ''.join(f'<img src="{P}images/{im}" alt="" data-i="{i}"{" class=\"on\"" if i == cur_i else ""} loading="lazy">' for i, (_, _, im) in enumerate(MO))
-    mo_links = ''.join(f'<a href="{(P + u) or './'}" data-i="{i}" style="--i:{i}"{" class=\"cur\"" if (u.strip("/") == active or (u == "" and active == "home")) else ""}><span class="mo-n">{["i","ii","iii","iv","v","vi","vii"][i]}.</span><span class="mo-t">{t}</span></a>' for i, (u, t, _) in enumerate(MO))
-    return f'''<div class="festive-bar"><span class="star">✦</span>Christmas at Latine <span class="hide-s">· Festive dining &amp; private parties</span> now booking <a href="{P}christmas/">Discover</a></div>
+    mo_links = ''.join(f'<a href="{(P + u) or './'}" data-i="{i}" style="--i:{i}"{" class=\"cur\"" if (u.strip("/") == active or (u == "" and active == "home")) else ""}><span class="mo-n">{["i","ii","iii","iv","v","vi","vii","viii"][i]}.</span><span class="mo-t">{t}</span></a>' for i, (u, t, _) in enumerate(MO))
+    return f'''<div class="festive-bar"><span class="star">✦</span><span class="hide-s">Christmas &amp; New Year at Latine · Festive dining &amp; private parties · </span>Now booking <a href="{P}christmas/">Christmas</a><a href="{P}new-year/">New Year</a></div>
 <nav class="nav" id="nav">
   <div class="left" style="display:flex;align-items:center">
     <button class="burger" aria-label="Open menu" id="burger"><span></span><span></span><span></span></button>
@@ -192,6 +192,7 @@ def footer(P):
         <li><a href="{P}our-menu/">Menus</a></li>
         <li><a href="{P}private-dining-room/">El Cielo private dining</a></li>
         <li><a href="{P}christmas/">Christmas</a></li>
+        <li><a href="{P}new-year/">New Year</a></li>
         <li><a href="{P}portfolio-gallery/">Gallery</a></li>
       </ul>
     </div>
@@ -306,7 +307,7 @@ def split(P, img, eyebrow, h2, paras, extra='', rev=False, wide=False, sid='', f
 
 def enquiry(P, occasion='Christmas party', eyebrow='Events &amp; Christmas enquiries', title='Tell us about your <em>occasion</em>',
             intro='Share a few details and our events team will come back to you with availability, menus and ideas for your day.'):
-    occs = ['Christmas party', 'Corporate dinner', 'Birthday', 'Celebration', 'Other']
+    occs = ['Christmas party', 'New Year', 'Corporate dinner', 'Birthday', 'Celebration', 'Other']
     labels = {'Other': 'Something else'}
     chips = ''.join(f'<input type="radio" name="occasion" id="o{i}" value="{o}"{" checked" if o == occasion else ""}><label for="o{i}">{labels.get(o, o)}</label>' for i, o in enumerate(occs))
     return f'''<section class="enquire" id="enquire">
@@ -450,7 +451,7 @@ def home(P):
     b = b.replace('<h3>Later, at La Candela</h3>', f'<h3><a href="{P}the-restaurant/#la-candela">Later, at La Candela</a></h3>')
     b = b.replace('</p>\n  </div>\n  <div class="acts-grid">', f'</p>\n  </div>\n  <div class="acts-grid">', 1)
     b = b.replace('</div>\n    </div>\n    <div class="mosaic', f'</div>\n      <a class="link rv d3" href="{P}our-menu/" style="display:inline-block;margin-top:34px;color:var(--terra)">All menus</a>\n    </div>\n    <div class="mosaic', 1)
-    b = b.replace('<div class="xmas-foot rv">', f'<div class="xmas-foot rv">\n      <a class="btn btn-line" href="{P}christmas/">Christmas at Latine</a>', 1)
+    b = b.replace('<div class="xmas-foot rv">', f'<div class="xmas-foot rv">\n      <a class="btn btn-line" href="{P}christmas/">Christmas at Latine</a>\n      <a class="btn btn-line" href="{P}new-year/">New Year at Latine</a>', 1)
     b = b.replace('<div style="margin-top:36px" class="rv d3"><a class="btn btn-solid" href="#enquire">Make an enquiry</a></div>',
                   f'<div style="margin-top:36px;display:flex;gap:12px;flex-wrap:wrap" class="rv d3"><a class="btn btn-solid" href="#enquire">Make an enquiry</a><a class="btn btn-line" href="{P}private-dining-room/">Discover El Cielo</a></div>')
     b = b.replace('<p class="sig rv d3">Hospitality, at the heart of everything.</p>',
@@ -601,19 +602,27 @@ def dessert_menu(P):
     o = o.replace('<div class="sp rv"><h4>Coffee', '<div class="hot"><div class="sp rv"><h4>Coffee', 1) + '</div>'
     return o
 
-def christmas_menu(P, compact=False):
-    xm = MJ('christmas')
+def set_menu_card(xm, eyebrow):
     secs = ''.join(f'<div class="xm-sec"><h4 class="xm-h">{esc(s["title"])}</h4>' + ''.join(
-        f'<div class="xm-i"><h5>{esc(i["name"])}{tags(i.get("tags"))}</h5><p>{esc(i["desc"])}</p></div>' for i in s['items'])
+        f'<div class="xm-i"><h5>{esc(i["name"])}{tags(i.get("tags"))}</h5><p>{esc(i["desc"])}</p>'
+        + (f'<p class="xm-plus">{esc(i["note"])}</p>' if i.get('note') else '') + '</div>' for i in s['items'])
         + (f'<p class="xm-note">{esc(s["note"])}</p>' if s.get('note') else '') + '</div>' for s in xm['sections'])
+    addon = f'<p class="xm-add">{esc(xm["addon"])}</p>' if xm.get('addon') else ''
     return f"""<div class="xm-card rv">
-      <p class="eyebrow">Christmas &amp; festive season</p>
+      <p class="eyebrow">{eyebrow}</p>
       <h3>{esc(xm['title'])}</h3>
       <p class="xm-price">£{xm['price']} <span>per person</span></p>
+      {addon}
       {ORN}
       {secs}
       <p class="xm-foot">All prices include VAT. A discretionary 13.5% service charge will be added to your bill.</p>
     </div>"""
+
+def christmas_menu(P, compact=False):
+    return set_menu_card(MJ('christmas'), 'Christmas &amp; festive season')
+
+def newyear_menus(P):
+    return '<div class="xm-duo">' + ''.join(set_menu_card(m, 'New Year') for m in MJ('newyear')['menus']) + '</div>'
 
 ALLERGEN = ('(V) Vegetarian · (VG) Vegan. Please always inform your server of any allergies or intolerances before ordering. '
             'Not all ingredients are listed and we cannot guarantee the total absence of allergens; information on the fourteen legal allergens is available on request. '
@@ -695,7 +704,7 @@ def menus(P):
   <div class="mhead"><p class="eyebrow rv">Christmas 2026</p><h2 class="rv d1">The festive <em>menu</em></h2>
   <p class="rv d2">Served through the festive season in the restaurant and for private parties in El Cielo.</p></div>
   {christmas_menu(P)}
-  <div style="text-align:center;margin-top:50px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap" class="rv">{btn_book('btn-solid', 'Book a festive table')}<a class="btn btn-line" href="{P}christmas/#enquire">Plan a Christmas party</a></div>
+  <div style="text-align:center;margin-top:50px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap" class="rv">{btn_book('btn-solid', 'Book a festive table')}<a class="btn btn-line" href="{P}christmas/#enquire">Plan a Christmas party</a><a class="btn btn-line" href="{P}new-year/">New Year menus</a></div>
 </section>
 """
 
@@ -762,7 +771,8 @@ def christmas(P):
 </section>
 <section class="sec">
 ''' + '''<div class="sec-head"><p class="eyebrow rv">Festive menu</p><h2 class="rv d1">Menu <em>Gran Latine</em></h2><p class="rv d2">Our Christmas menu, served in the restaurant and for private parties in El Cielo.</p></div>
-''' + christmas_menu(P) + '''
+''' + christmas_menu(P) + f'''
+  <div class="ny-teaser rv"><p class="eyebrow">And then, New Year</p><p>Two festive menus for seeing in the New Year, at £75 and £120 per person.</p><a class="btn btn-line" href="{P}new-year/">New Year at Latine</a></div>
 </section>
 '''+ enquiry(P, 'Christmas party', 'Christmas enquiries', 'Let\'s plan your<br><em>Christmas</em>',
         'December evenings go quickly. Tell us your preferred date, numbers and plans, and our events team will come back to you with availability and festive menus.') + '''
@@ -777,6 +787,46 @@ def christmas(P):
     ]) + '''
 </section>
 '''
+
+# ---------------------------------------------------------------- NEW YEAR
+def newyear(P):
+    ny = MJ('newyear')['menus']
+    lo, hi = ny[0]['price'], ny[1]['price']
+    return phero(P, '2026/09/PDR2-scaled.jpg', 'New Year at Latine · Festive menus', 'New Year in Mayfair,<br><em>the Latine way</em>',
+        'Two festive menus, oysters and Champagne, and a night that carries on upstairs at La Candela.',
+        btn_book('btn-gold', 'Book a table') + '<a class="btn btn-line" href="#enquire" data-occasion="New Year">Enquire for a group</a>', cls='dark') + f"""
+<section class="band band3 parallax" aria-label="From the festive menus at Latine">
+  <div class="b3"><img src="{P}images/tuna-tiradito.jpg" alt="Tuna tiradito with coconut cream" loading="lazy"></div>
+  <div class="b3"><img src="{P}images/steak-tartare.jpg" alt="Steak tartare on crisp potato pavé" loading="lazy"></div>
+  <div class="b3"><img src="{P}images/beef-fillet.jpg" alt="Chargrilled beef fillet" loading="lazy"></div>
+  <div class="band-cap rv"><span class="eyebrow">From the kitchen</span></div>
+</section>
+<section class="sec dark sparkles" id="menus" style="position:relative;overflow:hidden">
+  <div class="sec-head"><p class="eyebrow rv">Festive menus</p><h2 class="rv d1">Two ways to <em>celebrate</em></h2><p class="rv d2">Choose between two festive menus this New Year, at £{lo} or £{hi} per person. Add six oysters to either for £26.</p></div>
+  {newyear_menus(P)}
+  <div style="text-align:center;margin-top:50px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap" class="rv">{btn_book('btn-gold', 'Book a table')}<a class="btn btn-line" href="#enquire" data-occasion="New Year">Enquire for a group</a></div>
+  <div class="sec-head" style="margin-top:clamp(90px,10vw,140px)"><p class="eyebrow rv">Group sizes</p><h2 class="rv d1">Find your <em>space</em></h2></div>
+  <div class="sizes rv">
+    <div><b>2–8</b><span>The Restaurant</span><p>Book online for a table in the dining room.</p></div>
+    <div><b>9–14</b><span>Large tables</span><p>Send us an enquiry and we'll set a long table in the restaurant.</p></div>
+    <div><b>Up to 20</b><span>El Cielo · seated</span><p>Your own private room on the second floor.</p></div>
+    <div><b>40+</b><span>Receptions</span><p>Standing parties with Champagne, cocktails and canapés.</p></div>
+  </div>
+</section>
+""" + enquiry(P, 'New Year', 'New Year enquiries', "Let's plan your<br><em>New Year</em>",
+        'Tell us your preferred date, numbers and plans, and our events team will come back to you with availability.') + """
+<section class="sec">
+  <div class="sec-head"><p class="eyebrow rv">Questions</p><h2 class="rv d1">New Year <em>FAQs</em></h2></div>
+""" + faq([
+        ('How much are the New Year menus at Latine?', f'There are two festive menus: £{lo} per person and £{hi} per person. Six oysters can be added to either for £26. Prices include VAT, and a discretionary 13.5% service charge is added to the bill.'),
+        ('How do I book for New Year?', 'Up to 8 guests can book a table online. For larger groups, use the enquiry form above, call us on 020 3887 3126 or email contact@latinemayfair.com with your date and numbers.'),
+        ('Are there vegetarian dishes on the New Year menus?', 'Yes. Both menus have a vegetarian choice among the crudo, starters and mains. Let us know about any dietary requirements or allergies when you book, and remind our team on arrival.'),
+        ('Can we book a private room for New Year?', 'Yes. El Cielo, our private room on the second floor, seats up to 20 or holds over 40 for a standing reception. Send us an enquiry with your date and numbers.'),
+        ('Can we stay on after dinner?', 'Yes. La Candela on the first floor turns into a lounge with DJs, cocktails and Champagne as the evening goes on.'),
+    ]) + f"""
+  <div class="ny-teaser rv" style="margin-top:70px"><p class="eyebrow">Before the New Year</p><p>Christmas parties and festive dining in the restaurant and El Cielo.</p><a class="btn btn-line" href="{P}christmas/">Christmas at Latine</a></div>
+</section>
+"""
 
 # ---------------------------------------------------------------- GALLERY
 GALLERY = [
@@ -939,6 +989,7 @@ def llms_txt():
     def names(title, n=5): return '; '.join(nm(i) for x in food if x['title'] == title for i in x['items'][:n])
     sig = ', '.join(i['name'] for x in dr if x['title'] == 'Signature cocktails' for i in x['items'][:6])
     xmas = '; '.join(x['title'] + ': ' + ', '.join(i['name'].capitalize() for i in x['items']) for x in xm['sections'])
+    nyl = '\n'.join('- New Year menu "' + m['title'] + '": £' + m['price'] + ' per person. ' + '; '.join(x['title'] + ': ' + ', '.join(i['name'].capitalize() for i in x['items']) for x in m['sections']) for m in MJ('newyear')['menus'])
     return f"""# Latine Mayfair
 
 > Latine is a French–Latin American restaurant at 10–11 Lancashire Court, Mayfair, London W1S 1EY, in the cobbled mews between Brook Street and New Bond Street. It has a terrace, a marble crudo bar, a dining room, the La Candela cocktail lounge and El Cielo, a private dining room. This file is the restaurant's own summary of key facts.
@@ -982,12 +1033,18 @@ def llms_txt():
 - Private Christmas parties in El Cielo (20 seated, 40+ standing); larger tables in the restaurant on request
 - Details and enquiries: {SITE}christmas/
 
+## New Year
+{nyl}
+- Six oysters can be added to either menu for £26
+- Details and enquiries: {SITE}new-year/
+
 ## Pages
 - [Home]({SITE}): overview, spaces, offers and frequently asked questions
 - [The Restaurant]({SITE}the-restaurant/): terrace, dining room, crudo bar and La Candela
 - [Menus]({SITE}our-menu/): à la carte, set lunch, desserts, cocktails, wine, spirits and the Christmas menu, with prices
 - [Private Dining]({SITE}private-dining-room/): El Cielo private dining room, capacities and enquiry form
 - [Christmas]({SITE}christmas/): festive menu, Christmas parties and enquiry form
+- [New Year]({SITE}new-year/): the two New Year festive menus and enquiry form
 - [Gallery]({SITE}portfolio-gallery/): photographs of the restaurant and food
 - [About]({SITE}about-us/): the concept, the history of Lancashire Court and the team
 - [Press]({SITE}press/): reviews and coverage, including Wallpaper*, Forbes, The London Standard and Country & Town House
@@ -999,7 +1056,7 @@ def llms_txt():
 if __name__ == '__main__':
     # clean only what this script generates (OUT is the repo root)
     GEN = ['index.html', '404.html', 'sitemap.xml', 'robots.txt', 'images.txt', 'CNAME', 'css', 'js', 'images', 'video', 'send.php', '.htaccess', 'llms.txt', 'favicon.svg', 'favicon.png', 'apple-touch-icon.png',
-           'the-restaurant', 'our-menu', 'private-dining-room', 'christmas', 'portfolio-gallery', 'about-us', 'careers',
+           'the-restaurant', 'our-menu', 'private-dining-room', 'christmas', 'new-year', 'portfolio-gallery', 'about-us', 'careers',
            'press', 'lacav', 'lucky-7', 'reservation-policy', 'legal', 'journal', 'team', 'main-home', '404tmp']
     for g in GEN:
         t = os.path.join(OUT, g)
@@ -1034,6 +1091,7 @@ if __name__ == '__main__':
     page('our-menu/', 'Menus & Prices: À la Carte, Lunch, Cocktails | Latine Mayfair', 'Latine Mayfair menus with prices: ceviche, tiradito and oysters, mains from the grill, set lunch from £29, cocktails, wine and the Christmas menu.', menus, 'our-menu', og='photos/duck-magret-wide.jpg', crumb='Menus')
     page('private-dining-room/', 'Private Dining Room in Mayfair | El Cielo at Latine', 'El Cielo, Latine\'s private dining room in Mayfair near Bond Street: up to 20 seated or 40+ standing, with tailored menus for dinners and parties.', private, 'private-dining-room', og='2026/09/PDR6-scaled.jpg', crumb='Private Dining')
     page('christmas/', 'Christmas Parties & Festive Menu in Mayfair | Latine', 'Christmas at Latine Mayfair: the Menu Gran Latine at £120 per person, and private Christmas parties in El Cielo for up to 20 seated or 40+ standing.', christmas, 'christmas', og='2026/09/PDR1-scaled.jpg', crumb='Christmas')
+    page('new-year/', 'New Year in Mayfair | Festive Menus at Latine', 'New Year at Latine Mayfair: two festive menus at £75 and £120 per person, with oysters, Champagne and La Candela upstairs. Book a table or enquire for a group.', newyear, 'new-year', og='2026/09/PDR2-scaled.jpg', crumb='New Year')
     page('portfolio-gallery/', 'Gallery | Latine Mayfair Restaurant, London', 'Inside Latine Mayfair: the dining room, crudo bar, La Candela, El Cielo private dining room, terrace and food.', gallery, 'portfolio-gallery', plain=True, crumb='Gallery')
     page('about-us/', 'About Latine | French–Latin Restaurant in Mayfair, London', 'The story of Latine Mayfair: French culinary tradition meets Latin American flavour in a historic mews off Bond Street. Meet the team.', about, 'about-us', og='2026/05/LATINE-restautant-1024x684.png', crumb='About')
     page('careers/', 'Careers | Restaurant Jobs in Mayfair at Latine', 'Join the kitchen, bar or front of house team at Latine, a French–Latin restaurant in Mayfair.', careers, og='2026/05/LATINE-carr-1024x684.png', crumb='Careers')
@@ -1049,9 +1107,9 @@ if __name__ == '__main__':
     redirect('journal/', 'press/'); redirect('lucky-7/', ''); redirect('team/', 'about-us/'); redirect('main-home/', '')
     # At go-live: run with --domain to add the CNAME, then point latinemayfair.com DNS at GitHub Pages
     if '--domain' in sys.argv: open(os.path.join(OUT, 'CNAME'), 'w').write('latinemayfair.com\n')
-    urls = ['', 'the-restaurant/', 'our-menu/', 'private-dining-room/', 'christmas/', 'portfolio-gallery/', 'about-us/', 'careers/', 'press/', 'lacav/', 'reservation-policy/', 'legal/']
+    urls = ['', 'the-restaurant/', 'our-menu/', 'private-dining-room/', 'christmas/', 'new-year/', 'portfolio-gallery/', 'about-us/', 'careers/', 'press/', 'lacav/', 'reservation-policy/', 'legal/']
     today = datetime.date.today().isoformat()
-    prio = {'': '1.0', 'our-menu/': '0.9', 'private-dining-room/': '0.9', 'christmas/': '0.9', 'the-restaurant/': '0.8'}
+    prio = {'': '1.0', 'our-menu/': '0.9', 'private-dining-room/': '0.9', 'christmas/': '0.9', 'new-year/': '0.9', 'the-restaurant/': '0.8'}
     open(os.path.join(OUT, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}{u}</loc><lastmod>{today}</lastmod><priority>{prio.get(u, "0.5")}</priority></url>\n' for u in urls) + '</urlset>\n')
     bots = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Bingbot', 'Amazonbot', 'meta-externalagent', 'CCBot']
     open(os.path.join(OUT, 'robots.txt'), 'w').write('# Latine Mayfair: search engines and AI assistants are welcome\nUser-agent: *\nAllow: /\n\n' + ''.join(f'User-agent: {b}\nAllow: /\n\n' for b in bots) + f'Sitemap: {SITE}sitemap.xml\n')
