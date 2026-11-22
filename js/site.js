@@ -61,11 +61,18 @@
   function setOcc(v){$$('#chips input').forEach(function(r){r.checked=(r.value===v)})}
   $$('[data-occasion]').forEach(function(a){a.addEventListener('click',function(){setOcc(a.getAttribute('data-occasion'))})});
 
-  // forms: front-end only until wired to an inbox / Google Sheet
+  // forms: posted to the Google Apps Script behind the enquiries sheet
+  // the endpoint is kept out of the page markup and each submission carries a check code,
+  // so scripts that post straight to the form address are rejected by the Google script
+  var EP=['https://script.google','.com/macros/s/','AKfycbxJuxezp2XgzqYO22tVfzeNw8EKvIfsY_Isp0xqpPSo44ozssgDz1rbXOA4F3IJ-64tFQ','/exec'].join('');
+  var T0=Date.now();
+  function sig(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16)}
   function send(form,ok,fail){
     var btn=form.querySelector('button[type=submit],button');if(btn){btn.disabled=true;btn.style.opacity=.6}
-    var fd=new FormData(form);fd.append('page',location.pathname);
-    fetch(form.getAttribute('action'),{method:'POST',body:new URLSearchParams(fd)})
+    var fd=new FormData(form),d=String(Date.now()-T0);
+    fd.append('page',location.pathname);fd.append('d',d);
+    fd.append('k',sig(String(fd.get('email')||'').trim().toLowerCase()+'|'+d+'|latine-w1s'));
+    fetch(EP,{method:'POST',body:new URLSearchParams(fd)})
       .then(function(r){return r.json()}).then(function(j){if(j&&j.ok)ok();else throw 0})
       .catch(function(){if(btn){btn.disabled=false;btn.style.opacity=1}fail()});
   }

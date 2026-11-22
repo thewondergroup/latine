@@ -215,7 +215,7 @@ def footer(P):
       <p style="font-size:14px;line-height:1.9">Monday – Saturday<br>12pm – midnight<br>Closed Sunday</p>
       <h4 style="margin-top:30px">Invitations &amp; news</h4>
       <p style="font-size:14px">New menus, events and LACAV, opening soon.</p>
-      <form class="news" action="https://script.google.com/macros/s/AKfycbxJuxezp2XgzqYO22tVfzeNw8EKvIfsY_Isp0xqpPSo44ozssgDz1rbXOA4F3IJ-64tFQ/exec" method="post"><input type="hidden" name="form" value="Newsletter sign-up"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
+      <form class="news" action="#" method="post"><input type="hidden" name="form" value="Newsletter sign-up"><div class="hp" aria-hidden="true"><label>Leave blank<input name="enquiry_ref" tabindex="-1" autocomplete="off"></label></div><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Join</button></form>
     </div>
   </div>
   <div class="f-bot">
@@ -320,8 +320,8 @@ def enquiry(P, occasion='Christmas party', eyebrow='Events &amp; Christmas enqui
       <h2 class="rv d1">{title}</h2>
       <p class="rv d2">{intro}</p>
     </div>
-    <form class="enq rv d2" id="enqForm" action="https://script.google.com/macros/s/AKfycbxJuxezp2XgzqYO22tVfzeNw8EKvIfsY_Isp0xqpPSo44ozssgDz1rbXOA4F3IJ-64tFQ/exec" method="post">
-      <input type="hidden" name="form" value="Events enquiry"><div class="hp" aria-hidden="true"><label>Leave blank<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <form class="enq rv d2" id="enqForm" action="#" method="post">
+      <input type="hidden" name="form" value="Events enquiry"><div class="hp" aria-hidden="true"><label>Leave blank<input name="enquiry_ref" tabindex="-1" autocomplete="off"></label></div>
       <div class="f full"><label>Occasion</label><div class="chips" id="chips">{chips}</div></div>
       <div class="f"><label for="n">Name</label><input id="n" name="name" required autocomplete="name"></div>
       <div class="f"><label for="c">Company (optional)</label><input id="c" name="company" autocomplete="organization"></div>
@@ -943,7 +943,7 @@ def lacav(P):
     <p class="eyebrow rv">Coming soon to Latine</p>
     <h1 class="rv d1">LACAV</h1>
     <p class="rv d2">Something new is taking shape at Latine. Join the list to be the first to hear when the doors open.</p>
-    <form class="news rv d3" action="https://script.google.com/macros/s/AKfycbxJuxezp2XgzqYO22tVfzeNw8EKvIfsY_Isp0xqpPSo44ozssgDz1rbXOA4F3IJ-64tFQ/exec" method="post"><input type="hidden" name="form" value="LACAV waiting list"><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
+    <form class="news rv d3" action="#" method="post"><input type="hidden" name="form" value="LACAV waiting list"><div class="hp" aria-hidden="true"><label>Leave blank<input name="enquiry_ref" tabindex="-1" autocomplete="off"></label></div><input type="email" name="email" placeholder="Your email" required aria-label="Email"><button>Notify me</button></form>
   </div>
 </section>
 '''
