@@ -6,19 +6,19 @@
    "title": "Crudo",
    "items": [
     {
-     "name": "Ceviche de chou-fleur rôti",
-     "desc": "Cauliflower ceviche, 24-month Parmesan leche de tigre, tapioca biscuit",
-     "tags": [
-      "v"
-     ]
-    },
-    {
      "name": "Hot prawn ceviche",
      "desc": "Ají amarillo leche de tigre, sweet potato purée, roasted avocado, cancha powder, chalaca"
     },
     {
      "name": "Sea bass tiradito",
      "desc": "Passion fruit leche de tigre, brûléed sweet potato, corn cake, fresh red onion, coriander"
+    },
+    {
+     "name": "Ceviche de chou-fleur rôti",
+     "desc": "Cauliflower ceviche, 24-month Parmesan leche de tigre, tapioca biscuit",
+     "tags": [
+      "v"
+     ]
     }
    ]
   },
@@ -26,29 +26,25 @@
    "title": "Starter",
    "items": [
     {
-     "name": "Lentil salad",
-     "desc": "Quail egg, roasted Datterino tomatoes, rocket, roasted avocado, goat’s cheese, sweetcorn",
-     "tags": [
-      "v"
-     ]
+     "name": "Foie gras tostada",
+     "desc": "Roasted pineapple, Sauternes wine reduction"
     },
     {
      "name": "Latine chicken stew vol-au-vent",
      "desc": "Chicken and guasacaca sauce"
     },
     {
-     "name": "Foie gras tostada",
-     "desc": "Roasted pineapple, Sauternes wine reduction"
+     "name": "Lentil salad",
+     "desc": "Quail egg, roasted Datterino tomatoes, rocket, roasted avocado, goat’s cheese, sweetcorn",
+     "tags": [
+      "v"
+     ]
     }
    ]
   },
   {
    "title": "Main",
    "items": [
-    {
-     "name": "Cauliflower steak",
-     "desc": "Cauliflower, anticucho sauce, Riviera chimichurri"
-    },
     {
      "name": "Beef filet",
      "desc": "Chargrilled beef fillet, café de Lima sauce"
@@ -60,6 +56,10 @@
     {
      "name": "Butterflied sea bass",
      "desc": "Latine bouillabaisse sauce, mussels, prawns, green herb oil"
+    },
+    {
+     "name": "Cauliflower steak",
+     "desc": "Cauliflower, anticucho sauce, Riviera chimichurri"
     }
    ],
    "note": "Served with purée de pommes de terre and broccolini"

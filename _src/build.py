@@ -520,7 +520,21 @@ def restaurant(P):
 
 # ---------------------------------------------------------------- MENUS
 import json
-def MJ(n): return json.load(open(os.path.join(HERE, 'menus', n + '.json'), encoding='utf-8'))
+def veg_last(node):
+    """House rule: every menu section leads with its non-vegetarian dishes; vegetarian and vegan dishes sit at the bottom.
+    Sections that are all vegetarian (sides) or carry no tags (drinks, wine) are left exactly as written."""
+    if isinstance(node, list):
+        for x in node: veg_last(x)
+    elif isinstance(node, dict):
+        items = node.get('items')
+        if isinstance(items, list) and all(isinstance(i, dict) for i in items):
+            isveg = lambda i: any(t in ('v', 'vg') for t in (i.get('tags') or []))
+            if any(isveg(i) for i in items) and not all(isveg(i) for i in items):
+                node['items'] = [i for i in items if not isveg(i)] + [i for i in items if isveg(i)]
+        for v in node.values(): veg_last(v)
+    return node
+
+def MJ(n): return veg_last(json.load(open(os.path.join(HERE, 'menus', n + '.json'), encoding='utf-8')))
 def esc(t): return html.escape(t, quote=False)
 def price(p): return '' if not p else ('£' + (p[:-2] if p.endswith('.0') else p))
 def tags(t): return ''.join(f'<span class="tag">{x.upper()}</span>' for x in (t or []))
