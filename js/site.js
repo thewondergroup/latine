@@ -113,3 +113,28 @@
     document.addEventListener('keydown',function(e){if(!lb.classList.contains('open'))return;if(e.key==='Escape')lb.classList.remove('open');if(e.key==='ArrowLeft')show(cur-1);if(e.key==='ArrowRight')show(cur+1)});
   }
 })();
+
+// cookie consent: banner + choices (Google Consent Mode v2 defaults are set inline in <head> before GTM)
+(function(){
+  var KEY='lm_consent',box=document.getElementById('cc');if(!box)return;
+  var main=box.querySelector('.cc-main'),pref=box.querySelector('.cc-pref'),ca=document.getElementById('cc-a'),cm=document.getElementById('cc-m');
+  function get(){try{var c=JSON.parse(localStorage.getItem(KEY)||'null');if(c&&c.v===1&&Date.now()-c.t<15552000000)return c}catch(e){}return null}
+  function gt(){window.dataLayer=window.dataLayer||[];window.dataLayer.push(arguments)}
+  function clear(re){document.cookie.split(';').forEach(function(k){var n=k.split('=')[0].trim();if(!re.test(n))return;
+    var d=location.hostname.split('.'),gone='=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';document.cookie=n+gone;
+    while(d.length>1){document.cookie=n+gone+';domain=.'+d.join('.');d.shift()}})}
+  function apply(a,m){
+    gt('consent','update',{analytics_storage:a?'granted':'denied',ad_storage:m?'granted':'denied',ad_user_data:m?'granted':'denied',ad_personalization:m?'granted':'denied'});
+    try{localStorage.setItem(KEY,JSON.stringify({v:1,t:Date.now(),a:a,m:m}))}catch(e){}
+    if(!a)clear(/^(_ga|_gid|_gat)/);if(!m)clear(/^(_fbp|_fbc)/);
+    window.dataLayer.push({event:'consent_update',consent_analytics:a,consent_marketing:m});
+    box.hidden=true;
+  }
+  function open(){var c=get();ca.checked=!!(c&&c.a);cm.checked=!!(c&&c.m);main.hidden=false;pref.hidden=true;box.hidden=false;var b=box.querySelector('.cc-go');if(b)b.focus()}
+  box.addEventListener('click',function(e){var b=e.target.closest('[data-cc]');if(!b)return;var k=b.getAttribute('data-cc');
+    if(k==='accept')apply(true,true);else if(k==='reject')apply(false,false);
+    else if(k==='choose'){main.hidden=true;pref.hidden=false}else if(k==='back'){pref.hidden=true;main.hidden=false}
+    else if(k==='save')apply(ca.checked,cm.checked)});
+  document.addEventListener('click',function(e){var o=e.target.closest('[data-cc-open]');if(o){e.preventDefault();open()}});
+  if(!get())box.hidden=false;
+})();

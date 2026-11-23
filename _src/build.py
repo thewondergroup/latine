@@ -16,6 +16,30 @@ GTM_HEAD = ("<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':n
             "var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;"
             "j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','" + GTM_ID + "');</script>\n")
 GTM_BODY = ('<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=' + GTM_ID + '" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>\n')
+
+# Cookie consent (UK PECR / GDPR): everything non-essential is denied until the visitor chooses. Google Consent Mode v2 defaults are set BEFORE GTM loads;
+# the choice is kept in localStorage ('lm_consent', 6 months) and applied on every page. site.js shows the banner and pushes 'consent_update' to the dataLayer.
+CONSENT_HEAD = ("<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}"
+                "gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'granted',security_storage:'granted',wait_for_update:500});"
+                "try{var c=JSON.parse(localStorage.getItem('lm_consent')||'null');if(c&&c.v===1&&Date.now()-c.t<15552000000){gtag('consent','update',{analytics_storage:c.a?'granted':'denied',ad_storage:c.m?'granted':'denied',ad_user_data:c.m?'granted':'denied',ad_personalization:c.m?'granted':'denied'})}}catch(e){}"
+                "</script>\n")
+
+def cookie_banner(P):
+    return f'''<div class="cc" id="cc" role="dialog" aria-labelledby="cc-t" hidden>
+  <div class="cc-main">
+    <p class="cc-t" id="cc-t">Cookies</p>
+    <p class="cc-p">We use cookies to understand how our website is used and to measure our advertising. You choose: accept all, reject everything that is not essential, or pick. See our <a href="{P}legal/">privacy policy</a>.</p>
+    <div class="cc-b"><button type="button" class="cc-btn" data-cc="reject">Reject all</button><button type="button" class="cc-btn" data-cc="choose">Choose</button><button type="button" class="cc-btn cc-go" data-cc="accept">Accept all</button></div>
+  </div>
+  <div class="cc-pref" hidden>
+    <p class="cc-t">Your choices</p>
+    <label class="cc-row"><span><b>Essential</b><i>Needed for the website to work. Always on.</i></span><input type="checkbox" checked disabled></label>
+    <label class="cc-row"><span><b>Analytics</b><i>Google Analytics, so we can see which pages are used.</i></span><input type="checkbox" id="cc-a"></label>
+    <label class="cc-row"><span><b>Marketing</b><i>Meta (Facebook and Instagram) measurement for our advertising.</i></span><input type="checkbox" id="cc-m"></label>
+    <div class="cc-b"><button type="button" class="cc-btn" data-cc="back">Back</button><button type="button" class="cc-btn cc-go" data-cc="save">Save choices</button></div>
+  </div>
+</div>
+'''
 USED = set()
 
 # Real photography (in _src/photos) mapped onto each image slot. Slots not listed keep their placeholder.
@@ -121,7 +145,7 @@ def head(P, title, desc, path, og, noindex=False):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-{GTM_HEAD}<title>{html.escape(title, quote=False)}</title>
+{CONSENT_HEAD}{GTM_HEAD}<title>{html.escape(title, quote=False)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <meta name="robots" content="{'noindex, follow' if noindex else 'index, follow, max-image-preview:large, max-snippet:-1'}">
 <link rel="canonical" href="{SITE}{path}">
@@ -221,14 +245,14 @@ def footer(P):
   <div class="f-bot">
     <span>© 2026 Latine Mayfair Limited</span>
     <span class="credit">Created by <a href="https://thewonderagency.co/" target="_blank" rel="noopener">The Wonder Agency</a></span>
-    <span><a href="{P}reservation-policy/">Reservation policy</a><a href="{P}legal/">Privacy</a></span>
+    <span><a href="{P}reservation-policy/">Reservation policy</a><a href="{P}legal/">Privacy</a><a href="#" data-cc-open>Cookie settings</a></span>
   </div>
 </footer>
 <div class="mbook" id="mbook">
   <a href="{P}christmas/">Christmas</a>
   <a href="{BOOK}" target="_blank" rel="noopener">Book a table</a>
 </div>
-<script src="{P}js/site.js?v={ASSET_V}"></script>
+{cookie_banner(P)}<script src="{P}js/site.js?v={ASSET_V}"></script>
 </body>
 </html>
 '''
