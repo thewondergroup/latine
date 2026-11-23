@@ -128,6 +128,7 @@
     try{localStorage.setItem(KEY,JSON.stringify({v:1,t:Date.now(),a:a,m:m}))}catch(e){}
     if(!a)clear(/^(_ga|_gid|_gat)/);if(!m)clear(/^(_fbp|_fbc)/);
     window.dataLayer.push({event:'consent_update',consent_analytics:a,consent_marketing:m});
+    if(m)window.dataLayer.push({event:'marketing_consent'});else if(window.fbq)window.fbq('consent','revoke');
     box.hidden=true;
   }
   function open(){var c=get();ca.checked=!!(c&&c.a);cm.checked=!!(c&&c.m);main.hidden=false;pref.hidden=true;box.hidden=false;var b=box.querySelector('.cc-go');if(b)b.focus()}
@@ -136,5 +137,7 @@
     else if(k==='choose'){main.hidden=true;pref.hidden=false}else if(k==='back'){pref.hidden=true;main.hidden=false}
     else if(k==='save')apply(ca.checked,cm.checked)});
   document.addEventListener('click',function(e){var o=e.target.closest('[data-cc-open]');if(o){e.preventDefault();open()}});
-  if(!get())box.hidden=false;
+  var saved=get();
+  if(saved&&saved.m)window.dataLayer.push({event:'marketing_consent'});   // returning visitor who allowed marketing: Meta starts (GTM tag fires only on this event)
+  if(!saved)box.hidden=false;
 })();
