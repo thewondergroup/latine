@@ -141,3 +141,33 @@
   if(saved&&saved.m)window.dataLayer.push({event:'marketing_consent'});   // returning visitor who allowed marketing: Meta starts (GTM tag fires only on this event)
   if(!saved)box.hidden=false;
 })();
+
+// seasonal pop-up: waits until the cookie banner has been answered, shows once per browsing session,
+// and retires itself after the date in data-until
+(function(){
+  var p=document.getElementById('pop');if(!p)return;
+  var id=p.getAttribute('data-id')||'promo',key='lm_pop_'+id,until=Date.parse(p.getAttribute('data-until')||'');
+  if(until&&Date.now()>until)return;
+  try{if(sessionStorage.getItem(key))return}catch(e){}
+  var last=null,shown=false;
+  function dl(ev,what){window.dataLayer=window.dataLayer||[];var o={event:ev,popup_id:id};if(what)o.popup_click=what;window.dataLayer.push(o)}
+  function esc(e){if(e.key==='Escape')close()}
+  function close(){if(!shown)return;shown=false;p.classList.remove('on');document.removeEventListener('keydown',esc);
+    setTimeout(function(){p.hidden=true},460);if(last&&last.focus)try{last.focus({preventScroll:true})}catch(e){}}
+  function show(){
+    if(document.querySelector('.menu-overlay.open,#lb.open')){setTimeout(show,5000);return}   // not over the menu or a gallery photo
+    shown=true;last=document.activeElement;p.hidden=false;
+    requestAnimationFrame(function(){requestAnimationFrame(function(){p.classList.add('on')})});
+    document.addEventListener('keydown',esc);
+    var x=p.querySelector('.pop-x');if(x)try{x.focus({preventScroll:true})}catch(e){}
+    try{sessionStorage.setItem(key,'1')}catch(e){}
+    dl('popup_view');
+  }
+  p.addEventListener('click',function(e){
+    var c=e.target.closest('[data-pop-cta]');if(c){dl('popup_click',c.getAttribute('data-pop-cta'));close();return}
+    if(e.target===p||e.target.closest('[data-pop-close]'))close();
+  });
+  var cc=document.getElementById('cc');
+  if(cc&&!cc.hidden){var mo=new MutationObserver(function(){if(cc.hidden){mo.disconnect();setTimeout(show,1200)}});mo.observe(cc,{attributes:true,attributeFilter:['hidden']})}
+  else setTimeout(show,2500);
+})();

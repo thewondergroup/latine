@@ -40,6 +40,30 @@ def cookie_banner(P):
   </div>
 </div>
 '''
+# Seasonal pop-up. site.js shows it once per browsing session, after the cookie banner has been answered,
+# and stops showing it by itself once POPUP_UNTIL has passed. Set POPUP_ON = False to remove it from the site.
+POPUP_ON = True
+POPUP_ID = 'christmas-day-2026'
+POPUP_UNTIL = '2026-12-25T21:00:00'          # local time; after this the pop-up never appears
+
+def promo_popup(P):
+    if not POPUP_ON: return ''
+    book = BOOK + '&dateTime=2026-12-25T13%3A00&covers=2'
+    return f'''<div class="pop" id="pop" data-id="{POPUP_ID}" data-until="{POPUP_UNTIL}" hidden>
+  <div class="pop-card" role="dialog" aria-modal="true" aria-labelledby="pop-t">
+    <button type="button" class="pop-x" aria-label="Close" data-pop-close>&times;</button>
+    <div class="pop-img"><img src="{P}images/el-cielo-chandelier.jpg" alt="" loading="lazy"></div>
+    <div class="pop-body">
+      <p class="eyebrow">Friday 25 December</p>
+      <h2 id="pop-t">Open on<br><em>Christmas Day</em></h2>
+      <svg class="orn" viewBox="0 0 84 14" fill="none" stroke="currentColor" stroke-width=".8"><path d="M0 7h34M50 7h34"/><path d="M42 1l6 6-6 6-6-6z"/></svg>
+      <p class="pop-p">Join us for Christmas Day in Mayfair. Book your table online or call <a href="tel:+442038873126">020 3887 3126</a>.</p>
+      <div class="pop-b"><a class="btn btn-gold" href="{book}" target="_blank" rel="noopener" data-pop-cta="book">Book Christmas Day</a><a class="btn btn-line" href="{P}christmas/" data-pop-cta="christmas">Christmas at Latine</a></div>
+    </div>
+  </div>
+</div>
+'''
+
 USED = set()
 
 # Real photography (in _src/photos) mapped onto each image slot. Slots not listed keep their placeholder.
@@ -252,7 +276,7 @@ def footer(P):
   <a href="{P}christmas/">Christmas</a>
   <a href="{BOOK}" target="_blank" rel="noopener">Book a table</a>
 </div>
-{cookie_banner(P)}<script src="{P}js/site.js?v={ASSET_V}"></script>
+{promo_popup(P)}{cookie_banner(P)}<script src="{P}js/site.js?v={ASSET_V}"></script>
 </body>
 </html>
 '''
@@ -820,6 +844,7 @@ def christmas(P):
 <section class="sec">
   <div class="sec-head"><p class="eyebrow rv">Questions</p><h2 class="rv d1">Christmas <em>FAQs</em></h2></div>
 ''' + faq([
+        ('Is Latine open on Christmas Day?', 'Yes. Latine is open on Christmas Day, Friday 25 December 2026. Book a table online or call us on 020 3887 3126.'),
         ('How do I book a Christmas party?', 'Use the enquiry form above, call us on 020 3887 3126 or email contact@latinemayfair.com with your date, numbers and occasion. Our events team will come back with availability and menus.'),
         ('How many people can you host?', 'Up to 8 guests can book online. For 9–14 we\'ll set a large table in the restaurant; El Cielo, our private room, seats up to 20 or holds over 40 for a standing reception.'),
         ('Do festive bookings need a deposit?', 'For larger bookings, private dining and special events we may ask for card details through a secure payment link to secure your reservation. Terms are confirmed at the time of booking.'),
@@ -1071,6 +1096,7 @@ def llms_txt():
 
 ## Christmas 2026
 - Christmas menu "{xm['title']}": £{xm['price']} per person. {xmas}
+- Open on Christmas Day, Friday 25 December 2026
 - Private Christmas parties in El Cielo (20 seated, 40+ standing); larger tables in the restaurant on request
 - Details and enquiries: {SITE}christmas/
 
